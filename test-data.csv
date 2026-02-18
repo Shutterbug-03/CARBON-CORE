@@ -1,0 +1,6 @@
+Project,Location,Capacity_MW,Annual_Generation_MWh,Grid,Emission_Factor_tCO2e_per_MWh,Annual_Credits_tCO2e,Status,Verification_Date
+Gujarat Solar Park,Gujarat,500,875000,West,0.698,610750,Verified,2025-03-15
+Rajasthan Wind Farm,Rajasthan,200,420000,North,0.716,300720,Verified,2025-02-28
+Tamil Nadu Solar,Tamil Nadu,150,262500,South,0.682,179025,Pending,2025-04-01
+Jharkhand Biomass,Jharkhand,80,140000,East,0.821,114940,Verified,2025-01-20
+Maharashtra Wind,Maharashtra,300,630000,West,0.698,439740,Draft,2025-05-10
