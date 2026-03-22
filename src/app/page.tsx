@@ -7,55 +7,62 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export default function LandingPage() {
-  const [isNavVisible, setIsNavVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling down & past 100px - hide nav
-        setIsNavVisible(false);
-      } else if (currentScrollY < lastScrollY) {
-        // Scrolling up - show nav
-        setIsNavVisible(true);
-      }
-
-      setLastScrollY(currentScrollY);
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 50);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Floating Pill Navigation */}
-      <nav className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${
-        isNavVisible ? "top-6 opacity-100" : "-top-24 opacity-0"
-      }`}>
-        <div className="bg-card/80 backdrop-blur-xl border border-border rounded-full px-6 py-3 shadow-lg shadow-primary/5">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2 mr-4">
-              <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center">
-                <Shield size={14} className="text-primary" />
-              </div>
-              <span className="text-sm font-bold tracking-tight text-foreground">GreenPe</span>
+      {/* Header - Static to Pill on Scroll */}
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
+        isScrolled ? "py-3" : "py-6"
+      }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>
+        <nav className={`mx-auto transition-all duration-700 ${
+          isScrolled
+            ? "max-w-fit bg-white/10 backdrop-blur-2xl border border-white/20 rounded-full px-6 py-3 shadow-xl shadow-black/10 scale-[0.98]"
+            : "max-w-7xl bg-transparent px-6 rounded-2xl scale-100"
+        }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>
+          <div className="flex items-center justify-between gap-8">
+            <Link href="/" className="flex items-center gap-2">
+              <span className={`font-bold tracking-tight text-foreground transition-all duration-700 ${
+                isScrolled ? "text-sm" : "text-lg"
+              }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>GreenPe</span>
             </Link>
             <div className="hidden md:flex items-center gap-6">
-              <a href="#features" className="text-[13px] font-bold text-muted-foreground hover:text-foreground transition-colors">Features</a>
-              <a href="#how-it-works" className="text-[13px] font-bold text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
-              <a href="#impact" className="text-[13px] font-bold text-muted-foreground hover:text-foreground transition-colors">Impact</a>
+              <a href="#features" className={`font-bold transition-all duration-700 ${
+                isScrolled
+                  ? "text-[13px] text-foreground/70 hover:text-foreground"
+                  : "text-sm text-foreground/80 hover:text-foreground"
+              }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>Features</a>
+              <a href="#how-it-works" className={`font-bold transition-all duration-700 ${
+                isScrolled
+                  ? "text-[13px] text-foreground/70 hover:text-foreground"
+                  : "text-sm text-foreground/80 hover:text-foreground"
+              }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>How It Works</a>
+              <a href="#impact" className={`font-bold transition-all duration-700 ${
+                isScrolled
+                  ? "text-[13px] text-foreground/70 hover:text-foreground"
+                  : "text-sm text-foreground/80 hover:text-foreground"
+              }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>Impact</a>
             </div>
             <Link href="/onboarding">
-              <Button className="rounded-full px-6 h-9 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm cursor-pointer shadow-md hover:shadow-lg transition-all hover:scale-105 active:scale-95">
+              <button className={`rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-foreground font-bold cursor-pointer shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 duration-700 hover:bg-white/20 hover:border-white/40 ${
+                isScrolled ? "px-6 h-9 text-sm" : "px-8 h-11 text-base"
+              }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>
                 Get Involved
-              </Button>
+              </button>
             </Link>
           </div>
-        </div>
-      </nav>
+        </nav>
+      </header>
 
       {/* Hero Section - Premium Editorial with Video Background */}
       <section className="relative pt-40 md:pt-56 pb-32 md:pb-40 px-6 overflow-hidden">
@@ -92,7 +99,7 @@ export default function LandingPage() {
           {/* Massive Serif Headline */}
           <h1 className="font-[family-name:var(--font-playfair)] text-5xl md:text-7xl lg:text-8xl font-normal leading-[0.95] tracking-[-0.03em] mb-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
             <span className="text-black">Restoring our forests,</span><br />
-            <span className="italic text-accent font-light">one hectare at a time</span>
+            <span className="italic text-[#F5F5F0] font-light">one hectare at a time</span>
           </h1>
 
           {/* Centered Subtitle */}
@@ -146,15 +153,21 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: "⏳", title: "Manual Verification", desc: "Audits take weeks. Consultants charge thousands. Critical data gets lost in spreadsheets and email chains." },
-              { icon: "🔓", title: "Rampant Fraud", desc: "Double counting, ghost projects, and replay attacks continue to undermine trust in carbon markets." },
-              { icon: "🚫", title: "MSMEs Excluded", desc: "Small businesses can't afford verification infrastructure. They're systematically locked out." },
-              { icon: "📊", title: "No Visibility", desc: "Governments lack real-time climate execution data. Policy decisions are made in the dark." },
+              { icon: "⏳", title: "Manual Verification", desc: "Audits take weeks. Consultants charge thousands. Critical data gets lost in spreadsheets and email chains.", color: "from-red-500/10 to-orange-500/10" },
+              { icon: "🔓", title: "Rampant Fraud", desc: "Double counting, ghost projects, and replay attacks continue to undermine trust in carbon markets.", color: "from-orange-500/10 to-amber-500/10" },
+              { icon: "🚫", title: "MSMEs Excluded", desc: "Small businesses can't afford verification infrastructure. They're systematically locked out.", color: "from-amber-500/10 to-yellow-500/10" },
+              { icon: "📊", title: "No Visibility", desc: "Governments lack real-time climate execution data. Policy decisions are made in the dark.", color: "from-yellow-500/10 to-red-500/10" },
             ].map((card) => (
-              <div key={card.title} className="p-8 rounded-2xl bg-card border border-border/50 hover:border-primary/20 transition-all hover:shadow-md">
-                <p className="text-4xl mb-4">{card.icon}</p>
-                <h4 className="font-bold text-foreground mb-3 text-lg">{card.title}</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
+              <div
+                key={card.title}
+                className="group p-8 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 relative overflow-hidden"
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                <div className="relative z-10">
+                  <p className="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-500">{card.icon}</p>
+                  <h4 className="font-bold text-foreground mb-3 text-lg group-hover:text-primary transition-colors duration-300">{card.title}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -180,32 +193,49 @@ export default function LandingPage() {
                 icon: Cpu, title: "Carbon UPI Core",
                 desc: "Deterministic, boring, invisible. Converts climate activity into machine-verifiable proof using strict, replayable pipelines.",
                 features: ["Formula-based calculations", "Zero AI guessing", "Auditor-friendly design"],
+                color: "from-blue-500/10 to-cyan-500/10"
               },
               {
                 icon: Zap, title: "GreenPe SaaS", featured: true,
                 desc: "Your commercial interface. Beautiful UX, modular workflows, and AI agents that orchestrate the entire verification process.",
                 features: ["Multi-tenant compliance OS", "AI-powered automation", "API-first architecture"],
+                color: "from-primary/10 to-accent/10"
               },
               {
                 icon: FileCheck, title: "Green Impact Certificates",
                 desc: "Non-financial, non-tradable proof of climate action. Machine-verifiable, cryptographically secured, and registry-ready.",
                 features: ["Cryptographic hash sealing", "Complete audit trail", "CBAM compliance ready"],
+                color: "from-emerald-500/10 to-green-500/10"
               },
             ].map((card) => (
-              <div key={card.title} className={`p-8 rounded-2xl transition-all ${card.featured ? "bg-primary/5 border-2 border-primary/30 shadow-lg shadow-primary/10" : "bg-card border border-border/50 hover:border-primary/20 hover:shadow-md"}`}>
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
-                  <card.icon size={22} className="text-primary" strokeWidth={2} />
+              <div
+                key={card.title}
+                className={`group p-8 rounded-2xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl relative overflow-hidden ${
+                  card.featured
+                    ? "bg-primary/5 border-2 border-primary/30 shadow-lg shadow-primary/10 hover:border-primary/50"
+                    : "bg-card border border-border/50 hover:border-primary/30 hover:shadow-primary/10"
+                }`}
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                <div className="relative z-10">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-500">
+                    <card.icon size={22} className="text-primary transition-all duration-500 group-hover:scale-110" strokeWidth={2} />
+                  </div>
+                  <h4 className="font-bold text-foreground mb-3 text-lg group-hover:text-primary transition-colors duration-300">{card.title}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-6">{card.desc}</p>
+                  <ul className="space-y-2.5">
+                    {card.features.map((f, idx) => (
+                      <li
+                        key={f}
+                        className="flex items-start gap-2.5 text-sm transform transition-all duration-300"
+                        style={{ transitionDelay: `${idx * 50}ms` }}
+                      >
+                        <CheckCircle size={16} className="text-primary mt-0.5 shrink-0 group-hover:scale-110 transition-transform duration-300" strokeWidth={2.5} />
+                        <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <h4 className="font-bold text-foreground mb-3 text-lg">{card.title}</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-6">{card.desc}</p>
-                <ul className="space-y-2.5">
-                  {card.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm">
-                      <CheckCircle size={16} className="text-primary mt-0.5 shrink-0" strokeWidth={2.5} />
-                      <span className="text-muted-foreground">{f}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             ))}
           </div>
@@ -224,22 +254,33 @@ export default function LandingPage() {
 
           <div className="space-y-4">
             {[
-              { icon: Lock, title: "Identity Binding", desc: "Bind who + what + where + when. Every asset gets a unique fingerprint to prevent double counting." },
-              { icon: RefreshCw, title: "Data Ingestion", desc: "Sensors, satellites, manual entry. Every data point receives a trust score and source attribution." },
-              { icon: Cpu, title: "MRV Engine", desc: "Formula-based calculation. No guessing. Every methodology is deterministic and replayable.", active: true },
-              { icon: Layers, title: "Audit Trail", desc: "Every calculation step is logged, cryptographically hashed, and independently verifiable." },
-              { icon: FileCheck, title: "GIC Generation", desc: "Machine-verifiable proof packages. Registry-ready exports with complete evidence chains." },
+              { icon: Lock, title: "Identity Binding", desc: "Bind who + what + where + when. Every asset gets a unique fingerprint to prevent double counting.", color: "from-purple-500/10 to-indigo-500/10" },
+              { icon: RefreshCw, title: "Data Ingestion", desc: "Sensors, satellites, manual entry. Every data point receives a trust score and source attribution.", color: "from-indigo-500/10 to-blue-500/10" },
+              { icon: Cpu, title: "MRV Engine", desc: "Formula-based calculation. No guessing. Every methodology is deterministic and replayable.", active: true, color: "from-primary/10 to-accent/10" },
+              { icon: Layers, title: "Audit Trail", desc: "Every calculation step is logged, cryptographically hashed, and independently verifiable.", color: "from-emerald-500/10 to-teal-500/10" },
+              { icon: FileCheck, title: "GIC Generation", desc: "Machine-verifiable proof packages. Registry-ready exports with complete evidence chains.", color: "from-teal-500/10 to-cyan-500/10" },
             ].map((step, i) => (
-              <div key={step.title} className="flex items-start gap-5">
-                <div className={`w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${step.active ? "bg-primary text-primary-foreground shadow-md" : "bg-muted text-muted-foreground"}`}>
+              <div key={step.title} className="flex items-start gap-5 group">
+                <div className={`w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold shrink-0 transition-all duration-500 group-hover:scale-110 ${
+                  step.active
+                    ? "bg-primary text-primary-foreground shadow-md group-hover:shadow-xl"
+                    : "bg-muted text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground"
+                }`}>
                   {i + 1}
                 </div>
-                <div className={`flex-1 p-6 rounded-2xl transition-all ${step.active ? "bg-primary/5 border-2 border-primary/30" : "bg-card border border-border/50 hover:border-primary/20"}`}>
-                  <div className="flex items-center gap-2.5 mb-2">
-                    <step.icon size={18} className={step.active ? "text-primary" : "text-muted-foreground"} strokeWidth={2} />
-                    <h4 className="font-bold text-foreground">{step.title}</h4>
+                <div className={`flex-1 p-6 rounded-2xl transition-all duration-500 hover:-translate-y-1 hover:shadow-xl relative overflow-hidden ${
+                  step.active
+                    ? "bg-primary/5 border-2 border-primary/30 hover:border-primary/50"
+                    : "bg-card border border-border/50 hover:border-primary/30 hover:shadow-primary/10"
+                }`}>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${step.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2.5 mb-2">
+                      <step.icon size={18} className={`transition-all duration-500 group-hover:scale-110 ${step.active ? "text-primary" : "text-muted-foreground group-hover:text-primary"}`} strokeWidth={2} />
+                      <h4 className="font-bold text-foreground group-hover:text-primary transition-colors duration-300">{step.title}</h4>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -259,17 +300,20 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { icon: "🌾", title: "Farmers & MSMEs", desc: "Register assets, connect sensors, and receive verified proof of climate impact without expensive consultants or complex paperwork.", role: "farmer" },
-              { icon: "🏭", title: "Exporters", desc: "Generate CBAM-ready documentation instantly. Defend climate claims with machine-verifiable proof that stands up to regulatory scrutiny.", role: "exporter" },
-              { icon: "🏛️", title: "Governments", desc: "Gain real-time visibility into national climate execution. Detect fraud early. Make data-driven policy decisions with confidence.", role: "government" },
+              { icon: "🌾", title: "Farmers & MSMEs", desc: "Register assets, connect sensors, and receive verified proof of climate impact without expensive consultants or complex paperwork.", role: "farmer", color: "from-amber-500/10 to-yellow-500/10" },
+              { icon: "🏭", title: "Exporters", desc: "Generate CBAM-ready documentation instantly. Defend climate claims with machine-verifiable proof that stands up to regulatory scrutiny.", role: "exporter", color: "from-blue-500/10 to-indigo-500/10" },
+              { icon: "🏛️", title: "Governments", desc: "Gain real-time visibility into national climate execution. Detect fraud early. Make data-driven policy decisions with confidence.", role: "government", color: "from-emerald-500/10 to-teal-500/10" },
             ].map((card) => (
-              <div key={card.title} className="p-8 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all hover:shadow-md group">
-                <p className="text-4xl mb-4">{card.icon}</p>
-                <h4 className="font-bold text-foreground mb-3 text-lg">{card.title}</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-5">{card.desc}</p>
-                <Link href={`/onboarding?role=${card.role}`} className="inline-flex items-center gap-2 text-sm font-bold text-primary group-hover:gap-3 transition-all">
-                  Start as {card.title.split(" ")[0]} <ArrowRight size={16} strokeWidth={2.5} />
-                </Link>
+              <div key={card.title} className="group p-8 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 relative overflow-hidden">
+                <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                <div className="relative z-10">
+                  <p className="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-500">{card.icon}</p>
+                  <h4 className="font-bold text-foreground mb-3 text-lg group-hover:text-primary transition-colors duration-300">{card.title}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-5">{card.desc}</p>
+                  <Link href={`/onboarding?role=${card.role}`} className="inline-flex items-center gap-2 text-sm font-bold text-primary group-hover:gap-3 transition-all duration-300">
+                    Start as {card.title.split(" ")[0]} <ArrowRight size={16} strokeWidth={2.5} />
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
