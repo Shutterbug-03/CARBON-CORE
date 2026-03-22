@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import type p5 from 'p5';
+// import type p5 from 'p5'; // Commented out to avoid build error when p5 is not installed
 
 export interface ForceFieldBackgroundProps {
     /**
@@ -117,7 +117,7 @@ export function ForceFieldBackground({
     className = "",
 }: ForceFieldBackgroundProps) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const p5InstanceRef = useRef<p5 | null>(null);
+    const p5InstanceRef = useRef<any>(null); // Changed from p5 to any
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -143,6 +143,7 @@ export function ForceFieldBackground({
         let isMounted = true;
 
         const initP5 = async () => {
+            // @ts-ignore - p5 is optional and loaded dynamically
             const p5Module = await import('p5');
             const P5 = p5Module.default;
             if (!isMounted || !containerRef.current) return;
