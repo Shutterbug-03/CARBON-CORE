@@ -11,7 +11,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Shield } from "@phosphor-icons/react";
+import { ArrowRight, Shield } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 
 export const HeroSectionPremium = () => {
