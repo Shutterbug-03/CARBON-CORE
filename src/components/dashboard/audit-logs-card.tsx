@@ -21,9 +21,9 @@ export function AuditLogsCard() {
                     <div className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 group-hover:scale-110 transition-transform">
                         <History size={16} />
                     </div>
-                    <CardTitle className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Infrastructure Logs</CardTitle>
+                    <CardTitle className="text-xs font-bold uppercase tracking-[0.2em] text-white/40">Infrastructure Logs</CardTitle>
                 </div>
-                <Button variant="ghost" size="sm" className="text-[10px] uppercase font-bold text-emerald-400/60 hover:text-emerald-400 hover:bg-emerald-500/10 tracking-widest transition-all">
+                <Button variant="ghost" size="sm" className="text-xs uppercase font-bold text-emerald-400/60 hover:text-emerald-400 hover:bg-emerald-500/10 tracking-widest transition-all">
                     Full Registry <ArrowRight size={12} className="ml-1" />
                 </Button>
             </CardHeader>
@@ -38,9 +38,9 @@ export function AuditLogsCard() {
                             <div className="flex-1 min-w-0">
                                 <div className="flex justify-between items-center mb-0.5">
                                     <p className="text-xs font-bold text-white/90 group-hover:text-white transition-colors tracking-tight">{log.action}</p>
-                                    <span className="text-[9px] text-white/20 font-mono tracking-tighter uppercase">{log.time}</span>
+                                    <span className="text-xs text-white/20 font-mono tracking-tighter uppercase">{log.time}</span>
                                 </div>
-                                <p className="text-[11px] text-white/40 font-medium truncate tracking-tight">{log.detail}</p>
+                                <p className="text-sm text-white/40 font-medium truncate tracking-tight">{log.detail}</p>
                             </div>
                         </div>
                     ))}
@@ -53,10 +53,10 @@ export function AuditLogsCard() {
             <div className="p-4 bg-white/[0.02] border-t border-white/5 flex items-center justify-between relative z-10">
                 <div className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-emerald-500/40" />
-                    <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] leading-none">Standard: ISO-14064 Immutable</span>
+                    <span className="text-xs font-bold text-white/20 uppercase tracking-[0.2em] leading-none">Standard: ISO-14064 Immutable</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                    <Badge variant="outline" className="text-[9px] font-black bg-emerald-500/5 text-emerald-500/60 border-emerald-500/10 px-1.5 py-0">SYNCED</Badge>
+                    <Badge variant="outline" className="text-xs font-black bg-emerald-500/5 text-emerald-500/60 border-emerald-500/10 px-1.5 py-0">SYNCED</Badge>
                 </div>
             </div>
         </Card>

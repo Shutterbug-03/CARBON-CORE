@@ -19,9 +19,9 @@ export default function DeviceMapPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-xl font-bold tracking-tight">Device Map</h1>
-                    <p className="text-[11px] text-foreground/25">IoT sensor network • Real-time device telemetry</p>
+                    <p className="text-sm text-foreground/25">IoT sensor network • Real-time device telemetry</p>
                 </div>
-                <Badge className="bg-green-400/10 text-green-400 border-green-400/15 text-[9px] gap-1">
+                <Badge className="bg-green-400/10 text-green-400 border-green-400/15 text-xs gap-1">
                     <Radio size={10} /> {devices.filter((d) => d.status === "online").length} Online
                 </Badge>
             </div>
@@ -55,7 +55,7 @@ export default function DeviceMapPage() {
                                             : "bg-red-400/50"
                                         }`} />
                                     <div className="absolute left-4 top-0 glass rounded-lg px-2.5 py-1.5 opacity-0 group-hover/marker:opacity-100 transition-all duration-200 whitespace-nowrap z-20 pointer-events-none">
-                                        <p className="text-[10px] font-semibold text-foreground/80">{d.name}</p>
+                                        <p className="text-xs font-semibold text-foreground/80">{d.name}</p>
                                         <p className="text-[8px] text-foreground/30">{d.city}</p>
                                     </div>
                                 </div>
@@ -91,10 +91,10 @@ export default function DeviceMapPage() {
                                 <div className="flex items-center gap-2.5 mb-2">
                                     <div className={`w-2 h-2 rounded-full shrink-0 ${d.status === "online" ? "bg-green-400 shadow-[0_0_6px_rgba(74,222,128,0.3)]" : "bg-red-400/50"
                                         }`} />
-                                    <p className="text-[12px] font-semibold text-foreground/70 group-hover:text-foreground/90 transition-colors flex-1 truncate">{d.name}</p>
+                                    <p className="text-sm font-semibold text-foreground/70 group-hover:text-foreground/90 transition-colors flex-1 truncate">{d.name}</p>
                                     <span className="text-[8px] text-foreground/15 font-mono">{d.id}</span>
                                 </div>
-                                <div className="flex gap-3 text-[9px]">
+                                <div className="flex gap-3 text-xs">
                                     <div className="flex items-center gap-1">
                                         <Battery size={10} className="text-foreground/15" />
                                         <span className={`${d.battery > 50 ? "text-green-400/60" : d.battery > 20 ? "text-amber-400/60" : "text-red-400/60"}`}>{d.battery}%</span>

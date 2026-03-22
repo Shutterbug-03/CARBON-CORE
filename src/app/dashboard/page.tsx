@@ -13,20 +13,20 @@ import { CreateCertificateModal } from "@/components/create-certificate-modal";
 
 function useLiveStats() {
     const [stats, setStats] = useState({
-        certificates: 24932,
-        impact: 892109,
-        registry: 150,
-        identities: 8226,
+        certificates: 24847,
+        impact: 891273,
+        registry: 147,
+        identities: 8219,
     });
     useEffect(() => {
         const i = setInterval(() => {
             setStats((s) => ({
-                certificates: s.certificates + Math.floor(Math.random() * 2),
-                impact: s.impact + Math.floor(Math.random() * 50),
-                registry: s.registry + (Math.random() > 0.9 ? 1 : 0),
-                identities: s.identities + (Math.random() > 0.95 ? 1 : 0),
+                certificates: s.certificates + Math.floor(Math.random() * 3),
+                impact: s.impact + Math.floor(Math.random() * 73),
+                registry: s.registry + (Math.random() > 0.92 ? 1 : 0),
+                identities: s.identities + (Math.random() > 0.94 ? 1 : 0),
             }));
-        }, 5000);
+        }, 4800);
         return () => clearInterval(i);
     }, []);
     return stats;
@@ -43,32 +43,32 @@ export default function DashboardOverview() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <div className="flex flex-col">
-                        <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+                        <h1 className="text-3xl md:text-4xl font-black tracking-tighter text-gray-900 dark:text-white flex items-center gap-3">
                             Infrastructure Console
-                            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 px-2 py-0 h-5 text-[10px] font-bold">LIVE</Badge>
+                            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 px-3 py-1 text-xs font-black tracking-wider">LIVE</Badge>
                         </h1>
-                        <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Platform Status</span>
-                            <div className="flex items-center gap-1.5">
-                                <span className="relative flex h-2 w-2">
+                        <div className="flex items-center gap-3 mt-2">
+                            <span className="text-sm font-bold text-gray-600 dark:text-gray-400 uppercase tracking-widest">Platform Status</span>
+                            <div className="flex items-center gap-2">
+                                <span className="relative flex h-2.5 w-2.5">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                                 </span>
-                                <span className="text-[11px] font-bold text-emerald-600/80">Operational</span>
+                                <span className="text-sm font-black text-emerald-600">Operational</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="hidden md:flex items-center bg-slate-100 rounded-lg px-3 py-1.5 border border-slate-200">
-                        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">Asset ID: GP-8821-VX</span>
+                    <div className="hidden md:flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-2 border border-gray-200 dark:border-gray-700">
+                        <span className="text-xs font-mono text-gray-600 dark:text-gray-400 uppercase tracking-[0.15em]">Asset ID: GP-8847-VX</span>
                     </div>
                     <Button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-10 px-5 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all text-xs uppercase tracking-tight"
+                        className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black h-11 px-6 shadow-lg shadow-emerald-600/30 active:scale-[0.97] transition-all text-sm tracking-wide"
                     >
-                        <Plus size={16} /> New Certificate
+                        <Plus size={18} /> New Certificate
                     </Button>
                 </div>
             </div>
@@ -97,14 +97,14 @@ export default function DashboardOverview() {
             </div>
 
             {/* ── Dashboard Footer ── */}
-            <div className="flex items-center justify-between pt-8 border-t border-slate-100">
+            <div className="flex items-center justify-between pt-8 border-t border-gray-200 dark:border-gray-800">
                 <div className="flex items-center gap-2">
-                    <Shield size={14} className="text-slate-400" />
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Standard: ISO 14064-3 / SOC 2 Ready</span>
+                    <Shield size={16} className="text-gray-500 dark:text-gray-400" />
+                    <span className="text-xs font-black text-gray-600 dark:text-gray-400 uppercase tracking-[0.15em]">Standard: ISO 14064-3 / SOC 2 Ready</span>
                 </div>
-                <div className="flex items-center gap-4 text-slate-400">
-                    <span className="text-[10px] font-mono">NODE_ID: 19284-A</span>
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-500/60 font-bold">Authenticated</span>
+                <div className="flex items-center gap-4 text-gray-600 dark:text-gray-400">
+                    <span className="text-xs font-mono">NODE_ID: 18347-A</span>
+                    <span className="text-xs font-mono uppercase tracking-[0.15em] text-emerald-600 dark:text-emerald-500 font-black">Authenticated</span>
                 </div>
             </div>
 

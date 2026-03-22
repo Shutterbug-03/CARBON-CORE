@@ -57,9 +57,9 @@ export default function PipelineSimulator() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-xl font-bold tracking-tight">Infrastructure Pipeline</h1>
-                    <p className="text-[11px] text-foreground/25">7-Layer deterministic execution engine</p>
+                    <p className="text-sm text-foreground/25">7-Layer deterministic execution engine</p>
                 </div>
-                <Button onClick={runSimulation} disabled={running} className="btn-glow bg-green-500 text-black font-semibold hover:bg-green-400 gap-2 text-[12px] h-9 cursor-pointer shadow-lg shadow-green-500/20">
+                <Button onClick={runSimulation} disabled={running} className="btn-glow bg-green-500 text-black font-semibold hover:bg-green-400 gap-2 text-sm h-9 cursor-pointer shadow-lg shadow-green-500/20">
                     {running ? <><Loader2 size={14} className="animate-spin" /> Processing...</> : <><Play size={14} /> Run Full Pipeline</>}
                 </Button>
             </div>
@@ -67,7 +67,7 @@ export default function PipelineSimulator() {
             {/* Progress bar */}
             {running && (
                 <div className="glass rounded-xl p-3">
-                    <div className="flex justify-between text-[9px] text-foreground/20 mb-1.5">
+                    <div className="flex justify-between text-xs text-foreground/20 mb-1.5">
                         <span>Pipeline Progress</span>
                         <span>{completedSteps.length}/{layers.length} Complete</span>
                     </div>
@@ -97,15 +97,15 @@ export default function PipelineSimulator() {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-bold text-foreground/15 tabular-nums">L{layer.id}</span>
+                                        <span className="text-xs font-bold text-foreground/15 tabular-nums">L{layer.id}</span>
                                         <h3 className="text-[13px] font-semibold text-foreground/80">{layer.name}</h3>
                                     </div>
-                                    <p className="text-[10px] text-foreground/25 mt-0.5 truncate">{layer.desc}</p>
+                                    <p className="text-xs text-foreground/25 mt-0.5 truncate">{layer.desc}</p>
                                 </div>
                                 <div className="shrink-0">
                                     {isCompleted && <Badge className="bg-green-400/10 text-green-400 border-green-400/15 text-[8px]">Complete</Badge>}
                                     {isCurrent && <Badge className="bg-green-400/10 text-green-400 border-green-400/15 text-[8px] animate-pulse">Processing</Badge>}
-                                    {!isCompleted && !isCurrent && <span className="text-[9px] text-foreground/10">Waiting</span>}
+                                    {!isCompleted && !isCurrent && <span className="text-xs text-foreground/10">Waiting</span>}
                                 </div>
                             </CardContent>
                         </Card>
@@ -129,7 +129,7 @@ export default function PipelineSimulator() {
                                 { label: "Audit Entries", value: result.auditTrail?.entries.length?.toString() },
                             ].map((item) => (
                                 <div key={item.label}>
-                                    <p className="text-[9px] text-foreground/20 uppercase tracking-wider mb-0.5">{item.label}</p>
+                                    <p className="text-xs text-foreground/20 uppercase tracking-wider mb-0.5">{item.label}</p>
                                     <p className={`text-sm font-bold ${item.highlight ? "text-green-400" : ""} font-mono`}>{item.value}</p>
                                 </div>
                             ))}

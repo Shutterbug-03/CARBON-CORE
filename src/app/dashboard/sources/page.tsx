@@ -19,26 +19,26 @@ export default function SourcesPage() {
         <div className="space-y-6 max-w-5xl mx-auto animate-fade-in p-2">
             <div className="flex flex-col gap-1 mb-2">
                 <h1 className="text-2xl font-black tracking-tighter text-foreground uppercase italic px-1">Data Ingest Sources</h1>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] px-1 font-bold opacity-50">Layer 2 — Multi-source data pipeline endpoints</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] px-1 font-bold opacity-50">Layer 2 — Multi-source data pipeline endpoints</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card className="card-glass glass-hover border-white/[0.05]">
                     <CardContent className="p-6 text-center">
                         <p className="text-3xl font-black text-emerald-400 tabular-nums drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">{sources.filter((s) => s.status === "active").length}</p>
-                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mt-2">Active Sources</p>
+                        <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mt-2">Active Sources</p>
                     </CardContent>
                 </Card>
                 <Card className="card-glass glass-hover border-white/[0.05]">
                     <CardContent className="p-6 text-center">
                         <p className="text-3xl font-black tabular-nums text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]">7.05M</p>
-                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mt-2">Total Records</p>
+                        <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mt-2">Total Records</p>
                     </CardContent>
                 </Card>
                 <Card className="card-glass glass-hover border-white/[0.05]">
                     <CardContent className="p-6 text-center">
                         <p className="text-3xl font-black tabular-nums text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">94.8%</p>
-                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mt-2">Avg Quality</p>
+                        <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mt-2">Avg Quality</p>
                     </CardContent>
                 </Card>
             </div>
@@ -61,7 +61,7 @@ export default function SourcesPage() {
                                 Add context to the Cognee Knowledge Graph. Agents will reference this for all future queries using deep-link vector verification.
                             </p>
                         </div>
-                        <Badge variant="outline" className="bg-emerald-500/5 text-emerald-500 border-emerald-500/20 text-[9px] font-black uppercase tracking-widest py-1 px-3">
+                        <Badge variant="outline" className="bg-emerald-500/5 text-emerald-500 border-emerald-500/20 text-xs font-black uppercase tracking-widest py-1 px-3">
                             Active Learning
                         </Badge>
                     </div>
@@ -73,7 +73,7 @@ export default function SourcesPage() {
                                 placeholder="Paste knowledge here (e.g., 'GreenPe verifies carbon credits using satellite data from ISRO...')"
                                 id="memory-input"
                             />
-                            <div className="absolute bottom-4 right-4 text-[10px] text-white/10 font-mono tracking-tighter">VECTORHUB_V1</div>
+                            <div className="absolute bottom-4 right-4 text-xs text-white/10 font-mono tracking-tighter">VECTORHUB_V1</div>
                         </div>
                         <div className="flex justify-end">
                             <button
@@ -115,9 +115,9 @@ export default function SourcesPage() {
 
             <div className="space-y-3 pt-4">
                 <div className="flex items-center justify-between px-1">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">Active Pipeline Endpoints</h3>
+                    <h3 className="text-xs font-black uppercase tracking-[0.3em] text-white/30">Active Pipeline Endpoints</h3>
                     <div className="h-px flex-1 mx-4 bg-white/5" />
-                    <span className="text-[10px] font-mono text-white/20">L2_GATEWAY_V4.2</span>
+                    <span className="text-xs font-mono text-white/20">L2_GATEWAY_V4.2</span>
                 </div>
 
                 {sources.map((source, i) => (
@@ -144,7 +144,7 @@ export default function SourcesPage() {
                                     <h3 className="text-sm font-bold text-white group-hover:translate-x-1 transition-transform">{source.name}</h3>
                                     <Badge variant="outline" className="bg-white/5 text-[8px] font-black uppercase tracking-widest text-white/40 border-white/5 py-0 px-2">{source.type}</Badge>
                                 </div>
-                                <div className="flex gap-4 mt-1.5 text-[10px] font-medium">
+                                <div className="flex gap-4 mt-1.5 text-xs font-medium">
                                     <span className="text-emerald-500/50 font-mono tracking-tighter">{source.protocol}</span>
                                     <span className="text-white/10">•</span>
                                     <span className="text-white/30 lowercase">{source.records} verified records</span>
@@ -157,7 +157,7 @@ export default function SourcesPage() {
                                 </div>
                                 <div className="h-8 w-px bg-white/5" />
                                 <div className={cn(
-                                    "flex items-center gap-2 py-1.5 px-3 rounded-lg border text-[9px] font-black uppercase tracking-widest transition-colors",
+                                    "flex items-center gap-2 py-1.5 px-3 rounded-lg border text-xs font-black uppercase tracking-widest transition-colors",
                                     source.status === "active"
                                         ? "bg-emerald-500/5 border-emerald-500/10 text-emerald-500"
                                         : "bg-amber-500/5 border-amber-500/10 text-amber-500"

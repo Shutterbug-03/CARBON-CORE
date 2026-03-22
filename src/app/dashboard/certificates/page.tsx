@@ -36,14 +36,14 @@ export default function CertificatesPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div>
                     <h1 className="text-xl font-bold tracking-tight">GIC Registry</h1>
-                    <p className="text-[11px] text-foreground/25">Green Impact Certificates • Machine-Verifiable Proof</p>
+                    <p className="text-sm text-foreground/25">Green Impact Certificates • Machine-Verifiable Proof</p>
                 </div>
                 <div className="flex gap-2">
                     <div className="flex items-center gap-2 glass rounded-lg px-3 py-1.5 hover:bg-foreground/[0.06] transition-all group">
                         <Search size={13} className="text-foreground/20 group-hover:text-green-400/50 transition-colors" />
-                        <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search certificates..." className="bg-transparent border-0 text-[11px] focus:outline-none placeholder:text-foreground/15 text-foreground/60 w-40" />
+                        <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search certificates..." className="bg-transparent border-0 text-sm focus:outline-none placeholder:text-foreground/15 text-foreground/60 w-40" />
                     </div>
-                    <Button variant="outline" className="gap-1.5 text-[11px] h-8 border-foreground/8 text-foreground/40 hover:bg-foreground/5 hover:text-foreground hover:border-green-400/20 transition-all cursor-pointer">
+                    <Button variant="outline" className="gap-1.5 text-sm h-8 border-foreground/8 text-foreground/40 hover:bg-foreground/5 hover:text-foreground hover:border-green-400/20 transition-all cursor-pointer">
                         <Filter size={12} /> Filter
                     </Button>
                 </div>
@@ -59,7 +59,7 @@ export default function CertificatesPage() {
                     <Card key={s.label} className="card-stat glass">
                         <CardContent className="p-4 text-center">
                             <p className={`text-3xl font-black tabular-nums ${s.color === "green" ? "text-green-400" : s.color === "blue" ? "text-blue-400" : "text-foreground/30"}`}>{s.count}</p>
-                            <p className="text-[10px] text-foreground/25 mt-1">{s.label}</p>
+                            <p className="text-xs text-foreground/25 mt-1">{s.label}</p>
                         </CardContent>
                     </Card>
                 ))}
@@ -87,7 +87,7 @@ export default function CertificatesPage() {
                                         <h3 className="text-[13px] font-semibold text-foreground/80 group-hover:text-foreground transition-colors">{c.name}</h3>
                                         <Badge className="bg-foreground/5 text-foreground/30 border-foreground/5 text-[8px]">{c.type}</Badge>
                                     </div>
-                                    <div className="flex gap-3 mt-0.5 text-[10px] text-foreground/20">
+                                    <div className="flex gap-3 mt-0.5 text-xs text-foreground/20">
                                         <span>#{c.id}</span>
                                         <span>•</span>
                                         <span>{c.date}</span>
@@ -96,8 +96,8 @@ export default function CertificatesPage() {
                                     </div>
                                 </div>
                                 <div className="text-right shrink-0">
-                                    <p className="text-sm font-bold tabular-nums">{c.impact} <span className="text-[9px] text-foreground/20 font-normal">tCO₂e</span></p>
-                                    <p className="text-[9px] text-foreground/20">{c.confidence}% confidence</p>
+                                    <p className="text-sm font-bold tabular-nums">{c.impact} <span className="text-xs text-foreground/20 font-normal">tCO₂e</span></p>
+                                    <p className="text-xs text-foreground/20">{c.confidence}% confidence</p>
                                 </div>
                                 <ChevronRight size={14} className="text-foreground/10 group-hover:text-green-400/40 group-hover:translate-x-0.5 transition-all shrink-0" />
                             </CardContent>
@@ -132,13 +132,13 @@ export default function CertificatesPage() {
                                         { label: "Issued", value: cert.date },
                                     ].map((field) => (
                                         <div key={field.label} className="flex justify-between items-center">
-                                            <span className="text-[10px] text-foreground/20 uppercase tracking-wider">{field.label}</span>
-                                            <span className={`text-[12px] font-medium ${field.highlight ? "text-green-400 font-bold" : "text-foreground/70"}`}>{field.value}</span>
+                                            <span className="text-xs text-foreground/20 uppercase tracking-wider">{field.label}</span>
+                                            <span className={`text-sm font-medium ${field.highlight ? "text-green-400 font-bold" : "text-foreground/70"}`}>{field.value}</span>
                                         </div>
                                     ))}
                                 </div>
                                 <div className="h-px bg-foreground/[0.04]" />
-                                <div className="flex items-center gap-2 text-[10px]">
+                                <div className="flex items-center gap-2 text-xs">
                                     <CheckCircle2 size={12} className="text-green-400" />
                                     <span className="text-green-400/70">Cryptographically Verified • Machine-Readable</span>
                                 </div>
@@ -153,7 +153,7 @@ export default function CertificatesPage() {
                         <Card className="glass">
                             <CardContent className="p-8 flex flex-col items-center justify-center text-center">
                                 <FileCheck size={32} className="text-foreground/8 mb-3" />
-                                <p className="text-[12px] text-foreground/20">Select a certificate to preview</p>
+                                <p className="text-sm text-foreground/20">Select a certificate to preview</p>
                             </CardContent>
                         </Card>
                     )}

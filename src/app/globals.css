@@ -99,37 +99,37 @@
 /* ============================================ */
 
 .light {
-  --background: oklch(0.97 0.002 250);
-  --foreground: oklch(0.15 0.01 250);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.01 250);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.01 250);
-  --primary: oklch(0.55 0.2 145);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.94 0.005 250);
-  --secondary-foreground: oklch(0.25 0.01 250);
-  --muted: oklch(0.94 0.005 250);
-  --muted-foreground: oklch(0.45 0.01 250);
-  --accent: oklch(0.55 0.2 145);
-  --accent-foreground: oklch(0.98 0 0);
-  --destructive: oklch(0.55 0.22 25);
-  --border: oklch(0.9 0.005 250);
-  --input: oklch(0.92 0.005 250);
-  --ring: oklch(0.55 0.2 145);
-  --chart-1: oklch(0.55 0.2 145);
-  --chart-2: oklch(0.5 0.17 200);
-  --chart-3: oklch(0.6 0.15 55);
-  --chart-4: oklch(0.5 0.2 300);
-  --chart-5: oklch(0.45 0.15 30);
-  --sidebar: oklch(0.97 0.002 250);
-  --sidebar-foreground: oklch(0.2 0.01 250);
-  --sidebar-primary: oklch(0.55 0.2 145);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.93 0.015 145);
-  --sidebar-accent-foreground: oklch(0.2 0.01 250);
-  --sidebar-border: oklch(0.9 0.005 250);
-  --sidebar-ring: oklch(0.55 0.2 145);
+  --background: #F3F4ED;
+  --foreground: #1A1E1A;
+  --card: #FFFFFF;
+  --card-foreground: #1A1E1A;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1E1A;
+  --primary: #2A5131;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E2E5DB;
+  --secondary-foreground: #2A5131;
+  --muted: #E8EBE3;
+  --muted-foreground: #5E655D;
+  --accent: #3A7840;
+  --accent-foreground: #FFFFFF;
+  --destructive: #EF4444;
+  --border: #E2E5DB;
+  --input: #E2E5DB;
+  --ring: #2A5131;
+  --chart-1: #2A5131;
+  --chart-2: #3A7840;
+  --chart-3: #4A9C54;
+  --chart-4: #66B56F;
+  --chart-5: #8CD193;
+  --sidebar: #F3F4ED;
+  --sidebar-foreground: #1A1E1A;
+  --sidebar-primary: #2A5131;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E8EBE3;
+  --sidebar-accent-foreground: #1A1E1A;
+  --sidebar-border: #E2E5DB;
+  --sidebar-ring: #2A5131;
   color-scheme: light;
 }
 
@@ -928,4 +928,12 @@
     radial-gradient(circle at 10% 20%, var(--grid-color) 2px, transparent 2.5px),
     radial-gradient(circle at 90% 80%, var(--grid-color) 2px, transparent 2.5px);
   background-size: 60px 60px;
+}
+
+/* ============================================ */
+/* VIDEO VIGNETTE OVERLAY                      */
+/* ============================================ */
+
+.bg-gradient-radial {
+  background-image: radial-gradient(circle at center, var(--tw-gradient-stops));
 }

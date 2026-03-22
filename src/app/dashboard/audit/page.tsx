@@ -24,9 +24,9 @@ export default function AuditDefensePage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-xl font-bold tracking-tight">Audit Defense</h1>
-                    <p className="text-[11px] text-foreground/25">Immutable hash chain • Real-time layer monitoring</p>
+                    <p className="text-sm text-foreground/25">Immutable hash chain • Real-time layer monitoring</p>
                 </div>
-                <Badge className="bg-green-400/10 text-green-400 border-green-400/15 text-[9px] gap-1 animate-pulse-glow">
+                <Badge className="bg-green-400/10 text-green-400 border-green-400/15 text-xs gap-1 animate-pulse-glow">
                     <Activity size={10} /> Live Feed
                 </Badge>
             </div>
@@ -42,11 +42,11 @@ export default function AuditDefensePage() {
                             <h3 className="text-[13px] font-semibold">Hash Chain Integrity</h3>
                             <Badge className="bg-green-400/10 text-green-400 border-green-400/15 text-[8px] gap-0.5"><CheckCircle2 size={8} /> Verified</Badge>
                         </div>
-                        <p className="text-[10px] text-foreground/25 font-mono mt-0.5">Chain Head: 0xae3f...d921 • Depth: 24,892 blocks</p>
+                        <p className="text-xs text-foreground/25 font-mono mt-0.5">Chain Head: 0xae3f...d921 • Depth: 24,892 blocks</p>
                     </div>
                     <div className="text-right">
-                        <p className="text-[10px] text-foreground/20">Last verified</p>
-                        <p className="text-[11px] text-green-400/80 font-mono">2m ago</p>
+                        <p className="text-xs text-foreground/20">Last verified</p>
+                        <p className="text-sm text-green-400/80 font-mono">2m ago</p>
                     </div>
                 </CardContent>
             </Card>
@@ -71,12 +71,12 @@ export default function AuditDefensePage() {
                             </div>
                             <Badge className="bg-foreground/5 text-foreground/25 border-foreground/5 text-[8px] shrink-0">L{event.layer}</Badge>
                             <div className="flex-1 min-w-0">
-                                <p className="text-[12px] text-foreground/60 group-hover:text-foreground/80 transition-colors truncate">{event.event}</p>
-                                <p className="text-[9px] text-foreground/15 font-mono mt-0.5">{event.hash}</p>
+                                <p className="text-sm text-foreground/60 group-hover:text-foreground/80 transition-colors truncate">{event.event}</p>
+                                <p className="text-xs text-foreground/15 font-mono mt-0.5">{event.hash}</p>
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0">
                                 <Clock size={10} className="text-foreground/10" />
-                                <span className="text-[9px] text-foreground/20">{event.time}</span>
+                                <span className="text-xs text-foreground/20">{event.time}</span>
                             </div>
                         </CardContent>
                     </Card>

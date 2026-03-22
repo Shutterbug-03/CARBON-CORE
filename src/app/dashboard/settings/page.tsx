@@ -32,7 +32,7 @@ export default function SettingsPage() {
             icon: Sun,
             children: (
                 <div className="space-y-4">
-                    <p className="text-[10px] text-foreground/25">Choose your preferred theme for the dashboard</p>
+                    <p className="text-xs text-foreground/25">Choose your preferred theme for the dashboard</p>
                     <div className="grid grid-cols-2 gap-3">
                         {[
                             { value: "dark" as const, label: "Dark", icon: Moon, desc: "Glass morphism UI" },
@@ -50,8 +50,8 @@ export default function SettingsPage() {
                                     }`}>
                                     <t.icon size={18} className={theme === t.value ? "text-green-400" : "text-foreground/25"} />
                                 </div>
-                                <p className={`text-[12px] font-semibold mb-0.5 ${theme === t.value ? "text-green-400" : "text-foreground/60"}`}>{t.label}</p>
-                                <p className="text-[9px] text-foreground/20">{t.desc}</p>
+                                <p className={`text-sm font-semibold mb-0.5 ${theme === t.value ? "text-green-400" : "text-foreground/60"}`}>{t.label}</p>
+                                <p className="text-xs text-foreground/20">{t.desc}</p>
                                 {theme === t.value && (
                                     <Badge className="bg-green-400/10 text-green-400 border-green-400/15 text-[8px] mt-2">Active</Badge>
                                 )}
@@ -72,7 +72,7 @@ export default function SettingsPage() {
                         </div>
                         <div>
                             <p className="text-[14px] font-bold">{user.entity?.name || "John Doe"}</p>
-                            <p className="text-[10px] text-foreground/25">Carbon Auditor L3 • Verified Entity</p>
+                            <p className="text-xs text-foreground/25">Carbon Auditor L3 • Verified Entity</p>
                             <Badge className="bg-green-400/10 text-green-400 border-green-400/15 text-[8px] mt-1 gap-0.5"><Fingerprint size={8} /> CIH Bound</Badge>
                         </div>
                     </div>
@@ -84,8 +84,8 @@ export default function SettingsPage() {
                             { label: "Identity Hash", value: user.identityHash?.slice(0, 16) || "0x3f2a..." },
                         ].map((f) => (
                             <div key={f.label}>
-                                <p className="text-[9px] text-foreground/20 uppercase tracking-wider">{f.label}</p>
-                                <p className="text-[11px] font-mono text-foreground/50">{f.value}</p>
+                                <p className="text-xs text-foreground/20 uppercase tracking-wider">{f.label}</p>
+                                <p className="text-sm font-mono text-foreground/50">{f.value}</p>
                             </div>
                         ))}
                     </div>
@@ -112,8 +112,8 @@ export default function SettingsPage() {
                                 {notifications[s.key] ? <s.icon size={14} /> : <BellOff size={14} />}
                             </div>
                             <div className="flex-1 text-left">
-                                <p className={`text-[12px] font-medium transition-colors ${notifications[s.key] ? "text-foreground/70" : "text-foreground/30"}`}>{s.label}</p>
-                                <p className="text-[9px] text-foreground/20">{s.desc}</p>
+                                <p className={`text-sm font-medium transition-colors ${notifications[s.key] ? "text-foreground/70" : "text-foreground/30"}`}>{s.label}</p>
+                                <p className="text-xs text-foreground/20">{s.desc}</p>
                             </div>
                             <div className={`w-9 h-5 rounded-full transition-all duration-300 relative ${notifications[s.key] ? "bg-green-500" : "bg-foreground/10"}`}>
                                 <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-all duration-300 ${notifications[s.key] ? "left-4.5" : "left-0.5"}`} />
@@ -139,8 +139,8 @@ export default function SettingsPage() {
                                 {s.enabled ? <Lock size={14} /> : <ToggleLeft size={14} />}
                             </div>
                             <div className="flex-1">
-                                <p className="text-[12px] font-medium text-foreground/70 group-hover:text-foreground/90 transition-colors">{s.label}</p>
-                                <p className="text-[9px] text-foreground/20">{s.desc}</p>
+                                <p className="text-sm font-medium text-foreground/70 group-hover:text-foreground/90 transition-colors">{s.label}</p>
+                                <p className="text-xs text-foreground/20">{s.desc}</p>
                             </div>
                             <Badge className={`text-[8px] ${s.enabled ? "bg-green-400/10 text-green-400 border-green-400/15" : "bg-foreground/5 text-foreground/20 border-foreground/5"}`}>
                                 {s.enabled ? "Active" : "Off"}
@@ -164,8 +164,8 @@ export default function SettingsPage() {
                             <div className="flex items-center gap-2.5">
                                 <EyeOff size={12} className="text-foreground/15" />
                                 <div>
-                                    <p className="text-[11px] font-medium text-foreground/60">{k.label}</p>
-                                    <p className="text-[9px] font-mono text-foreground/20">{k.masked}</p>
+                                    <p className="text-sm font-medium text-foreground/60">{k.label}</p>
+                                    <p className="text-xs font-mono text-foreground/20">{k.masked}</p>
                                 </div>
                             </div>
                             <Badge className={`text-[8px] ${k.status === "Set" ? "bg-green-400/10 text-green-400 border-green-400/15" : "bg-amber-400/10 text-amber-400 border-amber-400/15"}`}>
@@ -189,8 +189,8 @@ export default function SettingsPage() {
                         { label: "Uptime SLA", value: "99.97%", highlight: true },
                     ].map((s) => (
                         <div key={s.label} className="flex justify-between items-center py-2 px-3 rounded-lg hover:bg-foreground/[0.03] transition-all cursor-default">
-                            <span className="text-[11px] text-foreground/30">{s.label}</span>
-                            <span className={`text-[11px] font-mono ${s.highlight ? "text-green-400 font-bold" : "text-foreground/60"}`}>{s.value}</span>
+                            <span className="text-sm text-foreground/30">{s.label}</span>
+                            <span className={`text-sm font-mono ${s.highlight ? "text-green-400 font-bold" : "text-foreground/60"}`}>{s.value}</span>
                         </div>
                     ))}
                 </div>
@@ -212,8 +212,8 @@ export default function SettingsPage() {
                             className="p-3 glass rounded-lg hover:bg-foreground/[0.04] hover:border-green-400/10 transition-all cursor-pointer group text-left"
                         >
                             <d.icon size={14} className="text-green-400/40 group-hover:text-green-400 transition-colors mb-2" />
-                            <p className="text-[11px] font-medium text-foreground/60 group-hover:text-foreground/80 transition-colors">{d.label}</p>
-                            <p className="text-[9px] text-foreground/20">{d.desc}</p>
+                            <p className="text-sm font-medium text-foreground/60 group-hover:text-foreground/80 transition-colors">{d.label}</p>
+                            <p className="text-xs text-foreground/20">{d.desc}</p>
                         </button>
                     ))}
                 </div>
@@ -227,7 +227,7 @@ export default function SettingsPage() {
                     {["SOC 2 Type II", "ISO 27001", "GDPR Ready", "CBAM Aligned", "BRSR Compatible", "CCTS Framework"].map((c) => (
                         <div key={c} className="flex items-center gap-2 p-2.5 glass rounded-lg hover:bg-foreground/[0.04] hover:border-green-400/10 transition-all cursor-default group">
                             <Shield size={11} className="text-green-400/40 group-hover:text-green-400 transition-colors" />
-                            <span className="text-[10px] text-foreground/40 group-hover:text-foreground/70 transition-colors">{c}</span>
+                            <span className="text-xs text-foreground/40 group-hover:text-foreground/70 transition-colors">{c}</span>
                         </div>
                     ))}
                 </div>
@@ -239,7 +239,7 @@ export default function SettingsPage() {
         <div className="space-y-4 max-w-3xl mx-auto animate-fade-in">
             <div>
                 <h1 className="text-xl font-bold tracking-tight">System Settings</h1>
-                <p className="text-[11px] text-foreground/25">Identity, security, appearance, infrastructure configuration</p>
+                <p className="text-sm text-foreground/25">Identity, security, appearance, infrastructure configuration</p>
             </div>
 
             {sections.map((section, i) => (

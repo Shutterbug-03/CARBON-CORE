@@ -93,14 +93,14 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                 </div>
                 <div>
                     <p className="text-[13px] font-bold tracking-tight">GreenPe</p>
-                    <p className="text-[9px] tracking-[0.15em] text-green-400/50 uppercase font-medium">Infrastructure</p>
+                    <p className="text-xs tracking-[0.15em] text-green-400/50 uppercase font-medium">Infrastructure</p>
                 </div>
             </div>
 
             <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
                 {/* Platform */}
                 <div>
-                    <p className="text-[9px] tracking-[0.2em] text-foreground/20 uppercase px-3 mb-2 font-semibold">Platform</p>
+                    <p className="text-xs tracking-[0.2em] text-foreground/20 uppercase px-3 mb-2 font-semibold">Platform</p>
                     <div className="space-y-0.5">
                         {platformNav.map((item, i) => (
                             <div key={item.path} className={`animate-slide-in-left stagger-${i + 1}`} style={{ opacity: 0 }}>
@@ -112,7 +112,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
 
                 {/* DPI Layers */}
                 <div>
-                    <p className="text-[9px] tracking-[0.2em] text-foreground/20 uppercase px-3 mb-2 font-semibold">DPI Layers</p>
+                    <p className="text-xs tracking-[0.2em] text-foreground/20 uppercase px-3 mb-2 font-semibold">DPI Layers</p>
                     <div className="space-y-1 px-1">
                         {dpiLayers.map((layer) => {
                             const status = getLayerStatus(layer.id);
@@ -138,7 +138,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
 
                 {/* Compliance */}
                 <div>
-                    <p className="text-[9px] tracking-[0.2em] text-foreground/20 uppercase px-3 mb-2 font-semibold">Compliance</p>
+                    <p className="text-xs tracking-[0.2em] text-foreground/20 uppercase px-3 mb-2 font-semibold">Compliance</p>
                     <div className="space-y-0.5">
                         {complianceNav.map((item) => (
                             <NavLink key={item.path} {...item} />
@@ -150,12 +150,12 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
             {/* Footer */}
             <div className="border-t border-foreground/[0.04] px-4 py-3">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/10 flex items-center justify-center text-[11px] font-bold text-green-400 border border-green-500/10">
-                        {user.entity?.name?.[0] || "J"}
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/10 flex items-center justify-center text-sm font-black text-green-400 border border-green-500/10">
+                        {user.entity?.name?.[0] || "P"}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-medium text-foreground/80 truncate">{user.entity?.name || "John Doe"}</p>
-                        <p className="text-[9px] text-foreground/20">Carbon Auditor L3</p>
+                        <p className="text-sm font-bold text-foreground/80 truncate">{user.entity?.name || "Priya Malhotra"}</p>
+                        <p className="text-xs text-foreground/20 font-medium">Sr. Climate Analyst</p>
                     </div>
                     <button onClick={() => { logout(); router.push("/"); }} className="p-1.5 rounded-lg hover:bg-foreground/5 text-foreground/15 hover:text-red-400 transition-all duration-200 cursor-pointer">
                         <LogOut size={14} />
@@ -230,7 +230,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }, [user.isOnboarded, router]);
 
     return (
-        <div className={`flex h-screen overflow-hidden bg-grid-isometric ${theme === 'dark' ? 'bg-[#080d16]' : 'bg-gradient-to-br from-[#eef2f3] via-[#f0fdf4] to-[#ecfdf5]'}`}>
+        <div className={`flex h-screen overflow-hidden ${theme === 'dark' ? 'bg-[#080d16] bg-grid-isometric' : 'bg-white'}`}>
             {/* Desktop Sidebar */}
             <aside className="hidden md:flex flex-col w-[220px] shrink-0">
                 <SidebarContent />
@@ -253,16 +253,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     {/* Live Badge */}
                     <div className="hidden md:flex items-center gap-2 glass-green rounded-full px-3 py-1">
                         <span className="w-2 h-2 rounded-full bg-green-400 animate-dot-pulse" />
-                        <span className="text-[10px] text-green-400 font-medium">Live Infrastructure</span>
+                        <span className="text-xs text-green-400 font-medium">Live Infrastructure</span>
                     </div>
-                    <span className="hidden md:block text-[10px] text-foreground/15 font-mono">Last Updated: {time} UTC</span>
+                    <span className="hidden md:block text-xs text-foreground/15 font-mono">Last Updated: {time} UTC</span>
 
                     <div className="flex-1" />
 
                     {/* + New Certificate */}
                     <button
                         onClick={() => setCertModalOpen(true)}
-                        className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500 text-black text-[11px] font-semibold hover:bg-green-400 transition-all duration-200 btn-glow cursor-pointer shadow-sm"
+                        className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500 text-black text-sm font-semibold hover:bg-green-400 transition-all duration-200 btn-glow cursor-pointer shadow-sm"
                     >
                         <Plus size={14} /> New Certificate
                     </button>
@@ -270,7 +270,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     {/* Search */}
                     <div className="hidden md:flex items-center gap-2 glass rounded-lg px-3 py-1.5 w-48 hover:bg-foreground/[0.06] transition-all duration-200 group">
                         <Search size={13} className="text-foreground/20 group-hover:text-green-400/50 transition-colors" />
-                        <input placeholder="Search Asset ID..." className="bg-transparent border-0 text-[11px] focus:outline-none w-full placeholder:text-foreground/15 text-foreground/60" />
+                        <input placeholder="Search Asset ID..." className="bg-transparent border-0 text-sm focus:outline-none w-full placeholder:text-foreground/15 text-foreground/60" />
                     </div>
 
                     {/* Theme Toggle */}
@@ -290,8 +290,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <NotificationsPanel />
 
                     {/* Avatar */}
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/10 flex items-center justify-center text-[11px] font-bold text-green-400 border border-green-500/10">
-                        {user.entity?.name?.[0] || "J"}
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/10 flex items-center justify-center text-sm font-black text-green-400 border border-green-500/10">
+                        {user.entity?.name?.[0] || "P"}
                     </div>
                 </header>
 

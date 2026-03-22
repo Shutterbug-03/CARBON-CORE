@@ -87,7 +87,7 @@ export function CertificatePreviewDialog({ defaultData, trigger }: CertificatePr
             content: (
                 <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
                     <div className="space-y-1.5">
-                        <Label className="text-[10px] font-semibold text-emerald-400/80 uppercase tracking-wider">Registered Entity</Label>
+                        <Label className="text-xs font-semibold text-emerald-400/80 uppercase tracking-wider">Registered Entity</Label>
                         <Input
                             placeholder="Organization Name"
                             className="bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:border-emerald-500/50 focus:ring-emerald-500/20"
@@ -96,7 +96,7 @@ export function CertificatePreviewDialog({ defaultData, trigger }: CertificatePr
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <Label className="text-[10px] font-semibold text-emerald-400/80 uppercase tracking-wider">Address</Label>
+                        <Label className="text-xs font-semibold text-emerald-400/80 uppercase tracking-wider">Address</Label>
                         <Input
                             placeholder="Registered Address"
                             className="bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:border-emerald-500/50 focus:ring-emerald-500/20"
@@ -105,7 +105,7 @@ export function CertificatePreviewDialog({ defaultData, trigger }: CertificatePr
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <Label className="text-[10px] font-semibold text-emerald-400/80 uppercase tracking-wider">GSTIN</Label>
+                        <Label className="text-xs font-semibold text-emerald-400/80 uppercase tracking-wider">GSTIN</Label>
                         <Input
                             value={gstin}
                             onChange={(e) => setGstin(e.target.value)}
@@ -127,11 +127,11 @@ export function CertificatePreviewDialog({ defaultData, trigger }: CertificatePr
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <span className="text-[9px] text-white/40 uppercase block mb-0.5">Vintage</span>
+                            <span className="text-xs text-white/40 uppercase block mb-0.5">Vintage</span>
                             <span className="text-base font-mono font-bold text-white">2024</span>
                         </div>
                         <div>
-                            <span className="text-[9px] text-white/40 uppercase block mb-0.5">Volume</span>
+                            <span className="text-xs text-white/40 uppercase block mb-0.5">Volume</span>
                             <span className="text-base font-mono font-bold text-emerald-400">{defaultData.carbonReduced}</span>
                         </div>
                     </div>
@@ -166,7 +166,7 @@ export function CertificatePreviewDialog({ defaultData, trigger }: CertificatePr
                         </div>
                         <div>
                             <h2 className="font-bold text-sm text-white tracking-tight">Verification Console</h2>
-                            <p className="text-[10px] text-white/40 font-mono">ID: {defaultData.certificateId}</p>
+                            <p className="text-xs text-white/40 font-mono">ID: {defaultData.certificateId}</p>
                         </div>
                     </div>
 
@@ -185,7 +185,7 @@ export function CertificatePreviewDialog({ defaultData, trigger }: CertificatePr
                                     <div className="space-y-3 flex-1">
                                         <div className="flex items-center justify-between">
                                             <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wide">{step.title}</h3>
-                                            {step.status === 'verified' && <Badge variant="outline" className="text-[10px] h-5 px-1.5 border-emerald-500/20 text-emerald-500/70">VERIFIED</Badge>}
+                                            {step.status === 'verified' && <Badge variant="outline" className="text-xs h-5 px-1.5 border-emerald-500/20 text-emerald-500/70">VERIFIED</Badge>}
                                         </div>
                                         {step.content && (
                                             <div className="pt-1">
@@ -248,7 +248,7 @@ export function CertificatePreviewDialog({ defaultData, trigger }: CertificatePr
                                 <Maximize2 className="h-4 w-4" />
                             </button>
                             <button onClick={handleFit} className={cn("p-2 rounded-full hover:bg-white/10 transition-colors ml-1", autoScale ? "text-emerald-500 bg-emerald-500/10" : "text-white/60 hover:text-white")}>
-                                <span className="text-[10px] font-bold">FIT</span>
+                                <span className="text-xs font-bold">FIT</span>
                             </button>
                         </div>
                     </div>
@@ -274,10 +274,10 @@ export function CertificatePreviewDialog({ defaultData, trigger }: CertificatePr
                             <div className="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-white/20 pointer-events-none" />
 
                             {view === 'certificate' ? (
-                                <div className="w-full h-full p-[15mm] flex flex-col relative text-slate-900">
+                                <div className="w-full h-full p-[15mm] flex flex-col relative text-gray-900">
 
                                     {/* INNER CERTIFICATE BORDER */}
-                                    <div className="absolute inset-[10mm] border-[4px] border-double border-slate-200 pointer-events-none" />
+                                    <div className="absolute inset-[10mm] border-[4px] border-double border-gray-200 pointer-events-none" />
 
                                     {/* CONTENT */}
                                     <div className="relative z-10 h-full flex flex-col items-center text-center">
@@ -287,7 +287,7 @@ export function CertificatePreviewDialog({ defaultData, trigger }: CertificatePr
                                             <div className="h-16 w-16 bg-emerald-900/10 rounded-full flex items-center justify-center mb-6 border border-emerald-900/20">
                                                 <ShieldCheck className="h-8 w-8 text-emerald-800" />
                                             </div>
-                                            <h1 className="text-4xl font-serif text-slate-900 tracking-tight font-bold uppercase">Certificate of Impact</h1>
+                                            <h1 className="text-4xl font-serif text-gray-900 tracking-tight font-bold uppercase">Certificate of Impact</h1>
                                             <div className="h-1 w-16 bg-emerald-500 mt-6 rounded-full" />
                                         </div>
 
@@ -296,64 +296,64 @@ export function CertificatePreviewDialog({ defaultData, trigger }: CertificatePr
                                         {/* Main Pronouncement */}
                                         <div className="flex-1 flex flex-col justify-center w-full max-w-2xl space-y-10 -mt-12">
                                             <div>
-                                                <p className="font-serif italic text-xl text-slate-500 mb-3">This certifies that</p>
-                                                <h2 className="text-4xl font-bold text-slate-900 leading-tight">
-                                                    {recipientName || <span className="text-slate-300 decoration-dotted underline underline-offset-8">Organization Name</span>}
+                                                <p className="font-serif italic text-xl text-gray-500 mb-3">This certifies that</p>
+                                                <h2 className="text-4xl font-bold text-gray-900 leading-tight">
+                                                    {recipientName || <span className="text-gray-300 decoration-dotted underline underline-offset-8">Organization Name</span>}
                                                 </h2>
                                                 {(recipientAddress || gstin) && (
-                                                    <div className="mt-3 text-sm text-slate-400 font-mono">
+                                                    <div className="mt-3 text-sm text-gray-400 font-mono">
                                                         {recipientAddress} {gstin && `• GSTIN: ${gstin}`}
                                                     </div>
                                                 )}
                                             </div>
 
-                                            <div className="py-10 border-y border-slate-100 bg-slate-50/50">
-                                                <p className="text-slate-500 mb-4 text-base">Has successfully retired verified carbon credits equivalent to:</p>
+                                            <div className="py-10 border-y border-gray-100 bg-gray-50/50">
+                                                <p className="text-gray-500 mb-4 text-base">Has successfully retired verified carbon credits equivalent to:</p>
                                                 <div className="flex items-baseline justify-center gap-3">
-                                                    <span className="text-7xl font-bold text-slate-900 tracking-tighter">{defaultData.carbonReduced}</span>
+                                                    <span className="text-7xl font-bold text-gray-900 tracking-tighter">{defaultData.carbonReduced}</span>
                                                     <span className="text-xl font-semibold text-emerald-600 uppercase tracking-wide">tCO₂e</span>
                                                 </div>
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-12 text-left px-12">
                                                 <div>
-                                                    <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1.5">Project Origin</p>
-                                                    <p className="font-serif text-xl text-slate-900">Adani Solar Park IV</p>
-                                                    <p className="text-xs text-slate-500">Khavda, Gujarat, India</p>
+                                                    <p className="text-xs uppercase tracking-wider text-gray-400 font-bold mb-1.5">Project Origin</p>
+                                                    <p className="font-serif text-xl text-gray-900">Adani Solar Park IV</p>
+                                                    <p className="text-xs text-gray-500">Khavda, Gujarat, India</p>
                                                 </div>
                                                 <div>
-                                                    <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1.5">Vintage Allocation</p>
-                                                    <p className="font-serif text-xl text-slate-900">2024</p>
-                                                    <p className="text-xs text-slate-500">Verified Q1-Q4</p>
+                                                    <p className="text-xs uppercase tracking-wider text-gray-400 font-bold mb-1.5">Vintage Allocation</p>
+                                                    <p className="font-serif text-xl text-gray-900">2024</p>
+                                                    <p className="text-xs text-gray-500">Verified Q1-Q4</p>
                                                 </div>
                                             </div>
                                         </div>
 
                                         {/* Footer */}
-                                        <div className="w-full pt-10 border-t border-slate-100 flex items-end justify-between mt-auto">
+                                        <div className="w-full pt-10 border-t border-gray-100 flex items-end justify-between mt-auto">
                                             <div className="text-left">
-                                                <div className="h-10 w-32 bg-slate-100/50 mb-2 rounded-sm" /> {/* Signature Placeholder */}
-                                                <p className="text-[11px] uppercase font-bold text-slate-400">Authorized Signatory</p>
-                                                <p className="text-[10px] text-slate-400/80">CarbonCore Verification</p>
+                                                <div className="h-10 w-32 bg-gray-100/50 mb-2 rounded-sm" /> {/* Signature Placeholder */}
+                                                <p className="text-sm uppercase font-bold text-gray-400">Authorized Signatory</p>
+                                                <p className="text-xs text-gray-400/80">CarbonCore Verification</p>
                                             </div>
 
                                             <div className="text-right">
-                                                <div className="h-20 w-20 bg-white border border-slate-100 ml-auto p-1.5 shadow-sm">
-                                                    <div className="w-full h-full bg-slate-900" /> {/* QR Placeholder */}
+                                                <div className="h-20 w-20 bg-white border border-gray-100 ml-auto p-1.5 shadow-sm">
+                                                    <div className="w-full h-full bg-gray-900" /> {/* QR Placeholder */}
                                                 </div>
-                                                <p className="text-[10px] font-mono text-slate-300 mt-1.5">{defaultData.certificateId}</p>
+                                                <p className="text-xs font-mono text-gray-300 mt-1.5">{defaultData.certificateId}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             ) : (
                                 // AUDIT VIEW
-                                <div className="w-full h-full bg-white p-16 font-mono text-sm text-slate-600 overflow-hidden flex flex-col relative">
+                                <div className="w-full h-full bg-white p-16 font-mono text-sm text-gray-600 overflow-hidden flex flex-col relative">
                                     <div className="absolute top-0 left-0 w-full h-1.5 bg-emerald-500" />
-                                    <h3 className="text-2xl font-bold text-slate-900 mb-10 border-b border-slate-200 pb-5">Infrastructure Verification Log</h3>
+                                    <h3 className="text-2xl font-bold text-gray-900 mb-10 border-b border-gray-200 pb-5">Infrastructure Verification Log</h3>
 
                                     <div className="space-y-6 flex-1 overflow-hidden relative">
-                                        <div className="absolute left-3.5 top-0 bottom-0 w-[1px] bg-slate-100" />
+                                        <div className="absolute left-3.5 top-0 bottom-0 w-[1px] bg-gray-100" />
 
                                         {[
                                             { time: '10:00:01', event: 'IoT Device #8821 handshake successful', status: 'OK' },
@@ -363,19 +363,19 @@ export function CertificatePreviewDialog({ defaultData, trigger }: CertificatePr
                                             { time: '12:01:45', event: 'Token minting initialized', status: 'PENDING' },
                                         ].map((log, i) => (
                                             <div key={i} className="flex gap-6 relative">
-                                                <div className="w-2.5 h-2.5 rounded-full bg-slate-300 mt-1.5 relative z-10 ring-4 ring-white" />
-                                                <div className="flex-1 p-4 bg-slate-50 rounded border border-slate-100">
+                                                <div className="w-2.5 h-2.5 rounded-full bg-gray-300 mt-1.5 relative z-10 ring-4 ring-white" />
+                                                <div className="flex-1 p-4 bg-gray-50 rounded border border-gray-100">
                                                     <div className="flex justify-between mb-2">
-                                                        <span className="text-slate-400 text-xs">{log.time}</span>
-                                                        <span className={cn("font-bold text-[10px] px-2 py-0.5 rounded", log.status === 'OK' ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-600")}>{log.status}</span>
+                                                        <span className="text-gray-400 text-xs">{log.time}</span>
+                                                        <span className={cn("font-bold text-xs px-2 py-0.5 rounded", log.status === 'OK' ? "bg-emerald-100 text-emerald-700" : "bg-gray-200 text-gray-600")}>{log.status}</span>
                                                     </div>
-                                                    <p className="text-slate-800 font-medium">{log.event}</p>
+                                                    <p className="text-gray-800 font-medium">{log.event}</p>
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
 
-                                    <div className="mt-8 pt-6 border-t border-slate-100 text-xs text-slate-400 flex justify-between">
+                                    <div className="mt-8 pt-6 border-t border-gray-100 text-xs text-gray-400 flex justify-between">
                                         <span>HASH: 0x8f2...9a12</span>
                                         <span>BLOCK: 19284112</span>
                                     </div>

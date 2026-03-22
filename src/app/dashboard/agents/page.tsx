@@ -86,13 +86,13 @@ function AgentCard({ agent, onSelect }: { agent: Agent; onSelect: (a: Agent) => 
                     </div>
                     <div>
                         <p className="text-[13px] font-black text-white/80 group-hover:text-white transition-colors tracking-tight">{agent.name}</p>
-                        <p className="text-[9px] text-white/20 uppercase tracking-[0.2em] font-bold">{agent.id}</p>
+                        <p className="text-xs text-white/20 uppercase tracking-[0.2em] font-bold">{agent.id}</p>
                     </div>
                 </div>
                 <div className={`w-2.5 h-2.5 rounded-full ${style.dot}`} />
             </div>
 
-            <p className="text-[11px] text-white/30 mb-4 line-clamp-1 italic tracking-tight font-medium relative z-10">{agent.currentAction}</p>
+            <p className="text-sm text-white/30 mb-4 line-clamp-1 italic tracking-tight font-medium relative z-10">{agent.currentAction}</p>
 
             <div className="grid grid-cols-3 gap-3 mb-4 relative z-10">
                 <div className="text-center px-2 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
@@ -146,14 +146,14 @@ function ActivityItem({ activity }: { activity: AgentActivity }) {
                 }`} />
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 mb-0.5">
-                    <span className={`text-[10px] font-medium ${typeColors[activity.type] || "text-foreground/40"}`}>
+                    <span className={`text-xs font-medium ${typeColors[activity.type] || "text-foreground/40"}`}>
                         {activity.agentName}
                     </span>
                     <span className="text-[8px] text-foreground/15">•</span>
                     <span className="text-[8px] text-foreground/15 font-mono">{timeText}</span>
                 </div>
                 <p className="text-[10.5px] text-foreground/50">{activity.action}</p>
-                <p className="text-[9px] text-foreground/20 truncate">{activity.detail}</p>
+                <p className="text-xs text-foreground/20 truncate">{activity.detail}</p>
             </div>
         </div>
     );
@@ -215,15 +215,15 @@ function AgentDetailPanel({ agent, onClose, onDispatch }: {
                     </div>
                     <div>
                         <h3 className="text-[14px] font-bold text-white">{agent.name}</h3>
-                        <p className="text-[10px] text-foreground/30">{agent.id}</p>
+                        <p className="text-xs text-foreground/30">{agent.id}</p>
                     </div>
                 </div>
                 <button onClick={onClose} className="text-foreground/20 hover:text-foreground/60 text-[18px] cursor-pointer transition-colors">×</button>
             </div>
 
             <div className="flex items-center gap-2 mb-4">
-                <Badge className={`text-[9px] border ${style.badge}`}>{agent.status}</Badge>
-                <span className="text-[10px] text-foreground/30">{agent.currentAction}</span>
+                <Badge className={`text-xs border ${style.badge}`}>{agent.status}</Badge>
+                <span className="text-xs text-foreground/30">{agent.currentAction}</span>
             </div>
 
             <div className="grid grid-cols-2 gap-3 mb-4">
@@ -247,7 +247,7 @@ function AgentDetailPanel({ agent, onClose, onDispatch }: {
 
             {tasks.length > 0 && (
                 <div>
-                    <p className="text-[9px] text-foreground/20 uppercase tracking-wider mb-2 font-semibold">Quick Actions</p>
+                    <p className="text-xs text-foreground/20 uppercase tracking-wider mb-2 font-semibold">Quick Actions</p>
                     <div className="space-y-1.5">
                         {tasks.map((t) => (
                             <button
@@ -256,7 +256,7 @@ function AgentDetailPanel({ agent, onClose, onDispatch }: {
                                 className="w-full flex items-center gap-2 px-3 py-2 rounded-lg glass hover:bg-foreground/[0.06] transition-all duration-200 group cursor-pointer"
                             >
                                 <Play size={12} className="text-green-400/50 group-hover:text-green-400 transition-colors" />
-                                <span className="text-[11px] text-foreground/50 group-hover:text-foreground/80 transition-colors">{t.label}</span>
+                                <span className="text-sm text-foreground/50 group-hover:text-foreground/80 transition-colors">{t.label}</span>
                                 <ChevronRight size={12} className="ml-auto text-foreground/10 group-hover:text-foreground/30 transition-colors" />
                             </button>
                         ))}
@@ -268,9 +268,9 @@ function AgentDetailPanel({ agent, onClose, onDispatch }: {
                 <div className="mt-3 p-2.5 rounded-lg bg-red-500/5 border border-red-500/10">
                     <div className="flex items-center gap-1.5 mb-1">
                         <AlertTriangle size={11} className="text-red-400" />
-                        <span className="text-[9px] text-red-400 font-medium uppercase">Last Error</span>
+                        <span className="text-xs text-red-400 font-medium uppercase">Last Error</span>
                     </div>
-                    <p className="text-[10px] text-red-400/60 line-clamp-2">{agent.lastError}</p>
+                    <p className="text-xs text-red-400/60 line-clamp-2">{agent.lastError}</p>
                 </div>
             )}
         </div>
@@ -324,7 +324,7 @@ export default function AgentsDashboard() {
                         <Brain size={18} className="text-green-400" />
                         <div>
                             <h1 className="text-[16px] font-bold text-white leading-none">AI Agent Control Center</h1>
-                            <p className="text-[9px] text-foreground/25 mt-0.5">13 Agents · Greeni AI · A2A Protocol</p>
+                            <p className="text-xs text-foreground/25 mt-0.5">13 Agents · Greeni AI · A2A Protocol</p>
                         </div>
                     </div>
 
@@ -333,7 +333,7 @@ export default function AgentsDashboard() {
                         <div className="flex items-center gap-1 p-1 rounded-xl bg-foreground/[0.03] border border-foreground/[0.06]">
                             <button
                                 onClick={() => setActiveTab("chat")}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all duration-200 cursor-pointer ${activeTab === "chat"
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${activeTab === "chat"
                                     ? "bg-green-500/15 text-green-400 border border-green-500/20"
                                     : "text-foreground/30 hover:text-foreground/60"
                                     }`}
@@ -343,7 +343,7 @@ export default function AgentsDashboard() {
                             </button>
                             <button
                                 onClick={() => setActiveTab("fleet")}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all duration-200 cursor-pointer ${activeTab === "fleet"
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${activeTab === "fleet"
                                     ? "bg-foreground/[0.06] text-foreground/80 border border-foreground/[0.08]"
                                     : "text-foreground/30 hover:text-foreground/60"
                                     }`}
@@ -356,7 +356,7 @@ export default function AgentsDashboard() {
                         <Button
                             onClick={() => handleDispatch("orchestrator", "SYSTEM_STATUS")}
                             disabled={dispatching}
-                            className="glass-green hover:bg-green-500/20 text-green-400 text-[11px] px-3 py-1.5 rounded-lg border border-green-500/20 transition-all duration-200 cursor-pointer"
+                            className="glass-green hover:bg-green-500/20 text-green-400 text-sm px-3 py-1.5 rounded-lg border border-green-500/20 transition-all duration-200 cursor-pointer"
                         >
                             <Activity size={13} className="mr-1.5" />
                             Status
@@ -374,7 +374,7 @@ export default function AgentsDashboard() {
                                     <Sparkles size={13} className="text-green-400" />
                                 </div>
                                 <div>
-                                    <p className="text-[12px] font-semibold text-white">AI Agent Chat</p>
+                                    <p className="text-sm font-semibold text-white">AI Agent Chat</p>
                                     <p className="text-[8.5px] text-foreground/20">Powered by Greeni Agent Framework</p>
                                 </div>
                             </div>
@@ -385,7 +385,7 @@ export default function AgentsDashboard() {
                                     <button
                                         key={opt.id}
                                         onClick={() => setChatAgentId(opt.id)}
-                                        className={`px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all duration-150 cursor-pointer border ${chatAgentId === opt.id
+                                        className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer border ${chatAgentId === opt.id
                                             ? "bg-green-500/15 text-green-400 border-green-500/25"
                                             : "text-foreground/30 border-foreground/[0.05] hover:text-foreground/60 hover:border-foreground/[0.1]"
                                             }`}
@@ -427,7 +427,7 @@ export default function AgentsDashboard() {
                                             <ArrowUpRight size={12} className="text-foreground/10" />
                                         </div>
                                         <p className="text-[20px] font-bold text-foreground/90">{stat.value}</p>
-                                        <p className="text-[9px] text-foreground/25 uppercase tracking-wider">{stat.label}</p>
+                                        <p className="text-xs text-foreground/25 uppercase tracking-wider">{stat.label}</p>
                                     </CardContent>
                                 </Card>
                             ))}
@@ -438,10 +438,10 @@ export default function AgentsDashboard() {
                             {/* Agent Grid (left 2 cols) */}
                             <div className="lg:col-span-2 space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <p className="text-[11px] text-foreground/30 uppercase tracking-wider font-semibold">
+                                    <p className="text-sm text-foreground/30 uppercase tracking-wider font-semibold">
                                         Agent Fleet ({agents.length})
                                     </p>
-                                    <div className="flex items-center gap-3 text-[9px]">
+                                    <div className="flex items-center gap-3 text-xs">
                                         {["ACTIVE", "PROCESSING", "IDLE", "ERROR"].map(s => {
                                             const count = agents.filter(a => a.status === s).length;
                                             const st = STATUS_STYLES[s];
@@ -474,8 +474,8 @@ export default function AgentsDashboard() {
                                     {agents.length === 0 && !loading && (
                                         <div className="col-span-full flex flex-col items-center justify-center py-16 text-foreground/20">
                                             <Bot size={40} className="mb-3 text-foreground/10" />
-                                            <p className="text-[12px]">No agents loaded yet</p>
-                                            <p className="text-[10px] text-foreground/10 mt-1">Agents initialize on first API call</p>
+                                            <p className="text-sm">No agents loaded yet</p>
+                                            <p className="text-xs text-foreground/10 mt-1">Agents initialize on first API call</p>
                                         </div>
                                     )}
                                 </div>
@@ -483,7 +483,7 @@ export default function AgentsDashboard() {
 
                             {/* Activity Feed (right col) */}
                             <div className="space-y-4">
-                                <p className="text-[11px] text-foreground/30 uppercase tracking-wider font-semibold">
+                                <p className="text-sm text-foreground/30 uppercase tracking-wider font-semibold">
                                     Live Activity Feed
                                 </p>
                                 <div className="card-glass rounded-xl p-4 max-h-[600px] overflow-y-auto custom-scrollbar">
@@ -494,14 +494,14 @@ export default function AgentsDashboard() {
                                     ) : (
                                         <div className="flex flex-col items-center justify-center py-12 text-foreground/15">
                                             <MessageSquare size={24} className="mb-2" />
-                                            <p className="text-[11px]">No activity yet</p>
-                                            <p className="text-[9px] text-foreground/10 mt-1">Dispatch a task to see agent activity</p>
+                                            <p className="text-sm">No activity yet</p>
+                                            <p className="text-xs text-foreground/10 mt-1">Dispatch a task to see agent activity</p>
                                         </div>
                                     )}
                                 </div>
 
                                 <div className="card-glass rounded-xl p-4">
-                                    <p className="text-[10px] text-foreground/25 uppercase tracking-wider font-semibold mb-3">Architecture</p>
+                                    <p className="text-xs text-foreground/25 uppercase tracking-wider font-semibold mb-3">Architecture</p>
                                     <div className="space-y-2">
                                         {[
                                             { label: "AI Engine", value: "Greeni AI ✓", color: "bg-green-400" },
@@ -512,8 +512,8 @@ export default function AgentsDashboard() {
                                         ].map((item) => (
                                             <div key={item.label} className="flex items-center gap-2">
                                                 <div className={`w-1.5 h-1.5 rounded-full ${item.color}`} />
-                                                <span className="text-[9px] text-foreground/20 w-20">{item.label}</span>
-                                                <span className="text-[10px] text-foreground/50">{item.value}</span>
+                                                <span className="text-xs text-foreground/20 w-20">{item.label}</span>
+                                                <span className="text-xs text-foreground/50">{item.value}</span>
                                             </div>
                                         ))}
                                     </div>

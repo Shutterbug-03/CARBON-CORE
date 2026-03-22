@@ -39,9 +39,9 @@ export default function CompliancePage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-xl font-bold tracking-tight">Export Documentation</h1>
-                    <p className="text-[11px] text-foreground/25">Compliance frameworks • Automated disclosure generation</p>
+                    <p className="text-sm text-foreground/25">Compliance frameworks • Automated disclosure generation</p>
                 </div>
-                <Button className="btn-glow bg-green-500 text-black font-semibold hover:bg-green-400 gap-2 text-[12px] h-9 cursor-pointer shadow-lg shadow-green-500/20">
+                <Button className="btn-glow bg-green-500 text-black font-semibold hover:bg-green-400 gap-2 text-sm h-9 cursor-pointer shadow-lg shadow-green-500/20">
                     <FileDown size={14} /> Export All Reports
                 </Button>
             </div>
@@ -50,15 +50,15 @@ export default function CompliancePage() {
             <div className="grid grid-cols-3 gap-3">
                 <Card className="card-stat glass"><CardContent className="p-4 text-center">
                     <p className="text-2xl font-black text-green-400 tabular-nums">{frameworks.filter((f) => f.status === "complete").length}</p>
-                    <p className="text-[10px] text-foreground/25 mt-1">Complete</p>
+                    <p className="text-xs text-foreground/25 mt-1">Complete</p>
                 </CardContent></Card>
                 <Card className="card-stat glass"><CardContent className="p-4 text-center">
                     <p className="text-2xl font-black text-blue-400 tabular-nums">{frameworks.filter((f) => f.status === "in-progress").length}</p>
-                    <p className="text-[10px] text-foreground/25 mt-1">In Progress</p>
+                    <p className="text-xs text-foreground/25 mt-1">In Progress</p>
                 </CardContent></Card>
                 <Card className="card-stat glass"><CardContent className="p-4 text-center">
                     <p className="text-2xl font-black tabular-nums">{frameworks.filter((f) => f.status === "on-track").length}</p>
-                    <p className="text-[10px] text-foreground/25 mt-1">On Track</p>
+                    <p className="text-xs text-foreground/25 mt-1">On Track</p>
                 </CardContent></Card>
             </div>
 
@@ -89,14 +89,14 @@ export default function CompliancePage() {
                                                     {fw.status.replace("-", " ")}
                                                 </Badge>
                                             </div>
-                                            <p className="text-[10px] text-foreground/20 mt-0.5">{fw.fullName}</p>
+                                            <p className="text-xs text-foreground/20 mt-0.5">{fw.fullName}</p>
                                         </div>
                                     </div>
                                     <button className="p-2 rounded-lg hover:bg-foreground/5 text-foreground/15 hover:text-green-400/50 transition-all cursor-pointer opacity-0 group-hover:opacity-100">
                                         <FileDown size={14} />
                                     </button>
                                 </div>
-                                <p className="text-[11px] text-foreground/30 mb-3">{fw.desc}</p>
+                                <p className="text-sm text-foreground/30 mb-3">{fw.desc}</p>
                                 <div className="flex items-center gap-3">
                                     <div className="flex-1">
                                         <div className="h-1.5 bg-foreground/5 rounded-full overflow-hidden">
@@ -108,8 +108,8 @@ export default function CompliancePage() {
                                             />
                                         </div>
                                     </div>
-                                    <span className="text-[10px] text-foreground/25 tabular-nums">{fw.completed}/{fw.disclosures}</span>
-                                    <span className={`text-[10px] font-bold tabular-nums ${progress === 100 ? "text-green-400" : "text-foreground/40"}`}>{progress}%</span>
+                                    <span className="text-xs text-foreground/25 tabular-nums">{fw.completed}/{fw.disclosures}</span>
+                                    <span className={`text-xs font-bold tabular-nums ${progress === 100 ? "text-green-400" : "text-foreground/40"}`}>{progress}%</span>
                                 </div>
                             </CardContent>
                         </Card>
