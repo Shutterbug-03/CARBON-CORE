@@ -30,19 +30,20 @@ export default function ContactPage() {
             ? "max-w-fit bg-white/10 backdrop-blur-2xl border border-white/20 rounded-full px-6 py-3 shadow-xl shadow-black/10 scale-[0.98]"
             : "max-w-7xl bg-transparent px-6 rounded-2xl scale-100"
         }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>
-          <div className="flex items-center justify-between gap-8">
-            <Link href="/" className="flex items-center gap-2">
-              <span className={`font-bold tracking-tight text-foreground transition-all duration-700 ${
-                isScrolled ? "text-sm" : "text-lg"
-              }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>GreenPe</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-6">
-              <Link href="/#problem" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>The Problem</Link>
-              <Link href="/#how-it-works" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>How It Works</Link>
-              <Link href="/#why-greenpe" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>Why GreenPe</Link>
-              <Link href="/about" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>About Us</Link>
+          <div className="flex items-center justify-between gap-4 w-full">
+            <div className="flex-1 flex justify-start">
+              <Link href="/" className="flex items-center gap-2">
+                <span className={`font-bold tracking-tight text-foreground transition-all duration-700 ${
+                  isScrolled ? "text-sm" : "text-lg"
+                }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>GreenPe</span>
+              </Link>
             </div>
-            <div className="flex items-center gap-3 md:gap-4">
+            <div className="hidden md:flex items-center justify-center gap-8 px-4 shrink-0">
+              <Link href="/#how-it-works" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>Platform</Link>
+              <Link href="/#why-greenpe" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>Why Us</Link>
+              <Link href="/about" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>About</Link>
+            </div>
+            <div className="flex-1 flex items-center justify-end gap-3 md:gap-4 shrink-0">
               <Link href="/dashboard">
                 <button className={`rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-foreground font-bold cursor-pointer shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 duration-700 hover:bg-white/20 hover:border-white/40 ${
                   isScrolled ? "px-6 h-9 text-sm" : "px-8 h-11 text-base"
