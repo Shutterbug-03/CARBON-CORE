@@ -42,13 +42,18 @@ export default function LandingPage() {
               <a href="#why-greenpe" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>Why GreenPe</a>
               <Link href="/about" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>About Us</Link>
             </div>
-            <Link href="/contact">
-              <button className={`rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-foreground font-bold cursor-pointer shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 duration-700 hover:bg-white/20 hover:border-white/40 ${
-                isScrolled ? "px-6 h-9 text-sm" : "px-8 h-11 text-base"
-              }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>
-                Contact Us
-              </button>
-            </Link>
+            <div className="flex items-center gap-3 md:gap-4">
+              <Link href="/dashboard" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/80 hover:text-primary" : "text-sm text-foreground/90 hover:text-primary"}`}>
+                Dashboard
+              </Link>
+              <Link href="/contact">
+                <button className={`rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-foreground font-bold cursor-pointer shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 duration-700 hover:bg-white/20 hover:border-white/40 ${
+                  isScrolled ? "px-6 h-9 text-sm" : "px-8 h-11 text-base"
+                }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>
+                  Contact Us
+                </button>
+              </Link>
+            </div>
           </div>
         </nav>
       </header>

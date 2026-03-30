@@ -42,7 +42,12 @@ export default function ContactPage() {
               <Link href="/#why-greenpe" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>Why GreenPe</Link>
               <Link href="/about" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>About Us</Link>
             </div>
-            <span className={`font-bold text-primary transition-all duration-700 ${isScrolled ? "text-[13px]" : "text-sm"}`}>Contact Us</span>
+            <div className="flex items-center gap-4">
+              <Link href="/dashboard" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/80 hover:text-primary" : "text-sm text-foreground/90 hover:text-primary"}`}>
+                Dashboard
+              </Link>
+              <span className={`font-bold text-primary transition-all duration-700 ${isScrolled ? "text-[13px]" : "text-sm"}`}>Contact Us</span>
+            </div>
           </div>
         </nav>
       </header>
