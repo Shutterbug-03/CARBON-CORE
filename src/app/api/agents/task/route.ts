@@ -2,6 +2,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getAgentRegistry } from "@/lib/agents";
 import type { AgentTask } from "@/lib/agents/types";
 
+// Kill function if agent LLM call takes longer than 25s
+export const maxDuration = 25;
+
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();

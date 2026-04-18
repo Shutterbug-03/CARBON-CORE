@@ -3,6 +3,9 @@
  * Streams real-time responses from any agent using Greeni Agent Framework
  */
 
+// Hard cap: Vercel will kill this function after 30s regardless
+export const maxDuration = 30;
+
 import { NextRequest } from "next/server";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate } from "@langchain/core/prompts";
@@ -158,7 +161,7 @@ export async function POST(request: NextRequest) {
             console.warn("Memory read failed:", e);
         }
 
-        // Live web search — Tavily
+        // Live web search — Tavily (hard 5s timeout to prevent GB-hour drain)
         let webSearchBlock = "";
         const tavilyKey = process.env.TAVILY_API_KEY;
         if (tavilyKey) {
@@ -166,14 +169,23 @@ export async function POST(request: NextRequest) {
                 const { tavily } = await import("@tavily/core");
                 const tvly = tavily({ apiKey: tavilyKey });
 
-                // Search with the user's query + carbon/green context
                 const searchQuery = message.length > 200 ? message.slice(0, 200) : message;
-                const searchResults = await tvly.search(searchQuery, {
-                    maxResults: 3, // Reduce to 3 to avoid noise
-                    searchDepth: "basic",
-                    includeAnswer: true,
-                    topic: "general",
-                });
+                const searchController = new AbortController();
+                const searchTimeout = setTimeout(() => searchController.abort(), 5000);
+
+                const searchResults = await Promise.race([
+                    tvly.search(searchQuery, {
+                        maxResults: 3,
+                        searchDepth: "basic",
+                        includeAnswer: true,
+                        topic: "general",
+                    }),
+                    new Promise<never>((_, reject) =>
+                        searchController.signal.addEventListener('abort', () =>
+                            reject(new Error("Tavily search timeout"))
+                        )
+                    ),
+                ]).finally(() => clearTimeout(searchTimeout));
 
                 if (searchResults) {
                     webSearchBlock = "\n\n=== LIVE WEB DATA (External) ===\n";
