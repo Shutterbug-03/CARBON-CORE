@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-    LayoutDashboard, FileCheck, Cpu, Settings as SettingsIcon,
+    LayoutDashboard, FileCheck, Settings as SettingsIcon,
     Globe, Shield, ChevronRight, LogOut, Menu, X, Search,
-    Layers, Database, MapPin, User, Activity, Zap, Bot,
-    Sun, Moon, Plus, FlaskConical
+    Database, MapPin, User, Zap, Bot,
+    Sun, Moon, Plus, FlaskConical, Upload, BarChart3, Landmark,
+    Building2, Wallet, Cpu, MessageCircle
 } from "lucide-react";
 import { useApp } from "@/providers/app-provider";
 import { useAgents } from "@/providers/agent-provider";
@@ -15,12 +16,12 @@ import { useTheme } from "@/providers/theme-provider";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NotificationsPanel } from "@/components/notifications-panel";
 import { CreateCertificateModal } from "@/components/create-certificate-modal";
+import { CopilotPanel } from "@/components/copilot-panel";
 
 // Wraps page content: full-height passthrough for agents, scrollable+padded for all others
 function PageContent({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     if (pathname === "/dashboard/agents") {
-        // Agents page manages its own height and padding
         return <>{children}</>;
     }
     return (
@@ -30,43 +31,43 @@ function PageContent({ children }: { children: React.ReactNode }) {
     );
 }
 
-
-const platformNav = [
+// ── 9 CORE MODULES ──────────────────────────────────────────────────────────
+const coreModules = [
     { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { path: "/dashboard/account", icon: User, label: "My Account" },
+    { path: "/dashboard/ingest", icon: Upload, label: "Data Ingestion" },
     { path: "/dashboard/mrv", icon: FlaskConical, label: "MRV Engine" },
-    { path: "/dashboard/certificates", icon: FileCheck, label: "GIC Registry" },
-    { path: "/dashboard/pipeline", icon: Cpu, label: "Infrastructure View" },
-    { path: "/dashboard/sources", icon: Database, label: "Ingest Sources" },
-    { path: "/dashboard/map", icon: MapPin, label: "Device Map" },
+    { path: "/dashboard/certificates", icon: FileCheck, label: "GIC Management" },
+    { path: "/dashboard/compliance", icon: Globe, label: "Compliance Suite" },
+    { path: "/dashboard/emissions", icon: BarChart3, label: "Scope 1/2/3" },
+    { path: "/dashboard/finance", icon: Wallet, label: "Financial Services" },
+    { path: "/dashboard/government", icon: Landmark, label: "Government" },
+];
+
+const toolsNav = [
     { path: "/dashboard/agents", icon: Bot, label: "AI Agents" },
-];
-
-const complianceNav = [
+    { path: "/dashboard/pipeline", icon: Cpu, label: "Infrastructure" },
+    { path: "/dashboard/map", icon: MapPin, label: "Device Map" },
     { path: "/dashboard/audit", icon: Shield, label: "Audit Defense" },
-    { path: "/dashboard/compliance", icon: Globe, label: "Export Documentation" },
-    { path: "/dashboard/settings", icon: SettingsIcon, label: "System Settings" },
+    { path: "/dashboard/settings", icon: SettingsIcon, label: "Settings" },
 ];
 
-const dpiLayers = [
-    { id: 1, label: "Identity & Ingest" },
-    { id: 2, label: "MRV Engine" },
-    { id: 3, label: "Tokenization" },
-    { id: 4, label: "Settlement" },
-];
-
-function NavLink({ path, icon: Icon, label }: { path: string; icon: React.ComponentType<{ size?: number; className?: string }>; label: string }) {
+function NavLink({ path, icon: Icon, label, badge }: { path: string; icon: React.ComponentType<{ size?: number; className?: string }>; label: string; badge?: string }) {
     const pathname = usePathname();
     const isActive = pathname === path;
     return (
         <Link
             href={path}
-            className={`nav-link flex items-center gap-2.5 px-3 py-2 text-[12.5px] transition-all duration-200 group ${isActive
-                ? "nav-link-active text-green-400 font-medium"
-                : "text-foreground/40 hover:text-foreground/80"
+            className={`nav-link flex items-center gap-2.5 px-3 py-2 text-[12.5px] transition-all duration-200 group rounded-lg ${isActive
+                ? "nav-link-active text-green-400 font-medium bg-green-500/5"
+                : "text-foreground/40 hover:text-foreground/80 hover:bg-foreground/[0.03]"
                 }`}
         >
             <Icon size={16} className={`transition-all duration-200 ${isActive ? "text-green-400" : "text-foreground/25 group-hover:text-green-400/60"}`} />
             <span className="flex-1">{label}</span>
+            {badge && (
+                <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-green-500/10 text-green-400 font-semibold">{badge}</span>
+            )}
             {isActive && <ChevronRight size={12} className="text-green-400/50" />}
         </Link>
     );
@@ -74,16 +75,8 @@ function NavLink({ path, icon: Icon, label }: { path: string; icon: React.Compon
 
 function SidebarContent({ onClose }: { onClose?: () => void }) {
     const { user, logout } = useApp();
-    const { agents } = useAgents();
     const { theme } = useTheme();
-    const pathname = usePathname();
     const router = useRouter();
-
-    const getLayerStatus = (id: number) => {
-        const statuses = ["ACTIVE", "ACTIVE", "PROCESSING", "IDLE"];
-        const agentIdx = (id + agents.length) % statuses.length;
-        return statuses[agentIdx];
-    };
 
     return (
         <div className="flex flex-col h-full glass-sidebar">
@@ -94,16 +87,16 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                 </div>
                 <div>
                     <p className="text-[13px] font-bold tracking-tight">GreenPe</p>
-                    <p className="text-xs tracking-[0.15em] text-green-400/50 uppercase font-medium">Infrastructure</p>
+                    <p className="text-[9px] tracking-[0.2em] text-green-400/50 uppercase font-medium">Climate Compliance OS</p>
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
-                {/* Platform */}
+            <div className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
+                {/* Core Modules */}
                 <div>
-                    <p className="text-xs tracking-[0.2em] text-foreground/20 uppercase px-3 mb-2 font-semibold">Platform</p>
+                    <p className="text-[10px] tracking-[0.2em] text-foreground/20 uppercase px-3 mb-2 font-semibold">Core Modules</p>
                     <div className="space-y-0.5">
-                        {platformNav.map((item, i) => (
+                        {coreModules.map((item, i) => (
                             <div key={item.path} className={`animate-slide-in-left stagger-${i + 1}`} style={{ opacity: 0 }}>
                                 <NavLink {...item} />
                             </div>
@@ -111,37 +104,11 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                     </div>
                 </div>
 
-                {/* DPI Layers */}
+                {/* Tools & Admin */}
                 <div>
-                    <p className="text-xs tracking-[0.2em] text-foreground/20 uppercase px-3 mb-2 font-semibold">DPI Layers</p>
-                    <div className="space-y-1 px-1">
-                        {dpiLayers.map((layer) => {
-                            const status = getLayerStatus(layer.id);
-                            return (
-                                <div
-                                    key={layer.id}
-                                    className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-foreground/[0.03] transition-all duration-200 cursor-default group"
-                                >
-                                    <div className={`w-[7px] h-[7px] rounded-full shrink-0 transition-all duration-300 ${status === "ACTIVE"
-                                        ? "bg-green-400 shadow-[0_0_10px_rgba(74,222,128,0.5)] animate-dot-pulse"
-                                        : status === "PROCESSING"
-                                            ? "bg-blue-400 animate-pulse shadow-[0_0_8px_rgba(96,165,250,0.4)]"
-                                            : "bg-foreground/10"
-                                        }`} />
-                                    <span className="text-[11.5px] text-foreground/40 flex-1 group-hover:text-foreground/60 transition-colors">{layer.label}</span>
-                                    <span className={`text-[8px] capitalize transition-colors ${status === "ACTIVE" ? "text-green-400/60" : status === "PROCESSING" ? "text-blue-400/60" : "text-foreground/15"
-                                        }`}>{status.toLowerCase()}</span>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                {/* Compliance */}
-                <div>
-                    <p className="text-xs tracking-[0.2em] text-foreground/20 uppercase px-3 mb-2 font-semibold">Compliance</p>
+                    <p className="text-[10px] tracking-[0.2em] text-foreground/20 uppercase px-3 mb-2 font-semibold">Tools</p>
                     <div className="space-y-0.5">
-                        {complianceNav.map((item) => (
+                        {toolsNav.map((item) => (
                             <NavLink key={item.path} {...item} />
                         ))}
                     </div>
@@ -152,11 +119,11 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
             <div className="border-t border-foreground/[0.04] px-4 py-3">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/10 flex items-center justify-center text-sm font-black text-green-400 border border-green-500/10">
-                        {user.entity?.name?.[0] || "P"}
+                        {user.entity?.name?.[0] || "G"}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-foreground/80 truncate">{user.entity?.name || "Priya Malhotra"}</p>
-                        <p className="text-xs text-foreground/20 font-medium">Sr. Climate Analyst</p>
+                        <p className="text-sm font-bold text-foreground/80 truncate">{user.entity?.name || "GreenPe User"}</p>
+                        <p className="text-[10px] text-foreground/20 font-medium">Climate Compliance OS</p>
                     </div>
                     <button onClick={() => { logout(); router.push("/"); }} className="p-1.5 rounded-lg hover:bg-foreground/5 text-foreground/15 hover:text-red-400 transition-all duration-200 cursor-pointer">
                         <LogOut size={14} />
@@ -170,11 +137,11 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
 function MobileBottomNav() {
     const pathname = usePathname();
     const tabs = [
-        { path: "/dashboard", icon: LayoutDashboard, label: "Dash" },
+        { path: "/dashboard", icon: LayoutDashboard, label: "Home" },
+        { path: "/dashboard/mrv", icon: FlaskConical, label: "MRV" },
         { path: "/dashboard/certificates", icon: FileCheck, label: "GICs" },
-        { path: "/dashboard/pipeline", icon: Cpu, label: "Infra" },
-        { path: "/dashboard/map", icon: Globe, label: "Map" },
-        { path: "/dashboard/settings", icon: User, label: "Profile" },
+        { path: "/dashboard/compliance", icon: Globe, label: "Comply" },
+        { path: "/dashboard/account", icon: User, label: "Account" },
     ];
 
     return (
@@ -292,7 +259,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                     {/* Avatar */}
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/10 flex items-center justify-center text-sm font-black text-green-400 border border-green-500/10">
-                        {user.entity?.name?.[0] || "P"}
+                        {user.entity?.name?.[0] || "G"}
                     </div>
                 </header>
 
@@ -307,6 +274,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             {/* Mobile Bottom Nav */}
             <MobileBottomNav />
+
+            {/* GreenPe Copilot — Floating Panel */}
+            <CopilotPanel />
         </div>
     );
 }
