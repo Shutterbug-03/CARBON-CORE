@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useApp } from "@/providers/app-provider";
 import { Suspense } from "react";
 
+
 function OnboardingContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -21,6 +22,7 @@ function OnboardingContent() {
         name: "", registrationId: "", region: "", assetType: "", assetDesc: "",
     });
     const [isVerifying, setIsVerifying] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const roles = [
         { id: "farmer", label: "Asset Provider", icon: "🌾", desc: "Farmer, MSME, or facility owner generating climate impact" },
@@ -31,30 +33,57 @@ function OnboardingContent() {
 
     const handleComplete = async () => {
         setIsVerifying(true);
-        await new Promise((r) => setTimeout(r, 2000));
+        setError(null);
+        
+        try {
+            // MVP: Skip Supabase Auth (avoids email rate limits)
+            // Directly create entity + asset via server API
+            const res = await fetch("/api/onboarding", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    role,
+                    name: formData.name,
+                    registrationId: formData.registrationId,
+                    region: formData.region,
+                    assetType: formData.assetType,
+                    assetDesc: formData.assetDesc,
+                }),
+            });
+            
+            const result = await res.json();
+            if (!res.ok || !result.success) {
+                throw new Error(result.error || "Onboarding failed");
+            }
 
-        const entity = {
-            id: `ENT-${Date.now()}`,
-            type: role.toUpperCase(),
-            name: formData.name,
-            registrationId: formData.registrationId,
-            location: { lat: 28.6139, lng: 77.209, region: formData.region },
-            createdAt: new Date(),
-        };
-
-        const asset = {
-            id: `AST-${Date.now()}`,
-            type: formData.assetType.toUpperCase(),
-            ownerId: entity.id,
-            description: formData.assetDesc,
-            metadata: {},
-            boundAt: new Date(),
-        };
-
-        const hash = `0x${Math.random().toString(16).slice(2, 18)}`;
-        completeOnboarding(entity, asset, hash);
-        setIsVerifying(false);
-        router.push("/dashboard");
+            const hash = `0x${Math.random().toString(16).slice(2, 18)}`;
+            
+            completeOnboarding(
+                {
+                    id: result.entity.id,
+                    type: role.toUpperCase(),
+                    name: formData.name,
+                    registrationId: formData.registrationId,
+                    location: { lat: 28.6139, lng: 77.209, region: formData.region },
+                    createdAt: new Date(),
+                },
+                {
+                    id: result.asset.id,
+                    type: formData.assetType.toUpperCase(),
+                    ownerId: result.entity.id,
+                    description: formData.assetDesc,
+                    metadata: {},
+                    boundAt: new Date(),
+                },
+                hash
+            );
+            router.push("/dashboard");
+        } catch (err: any) {
+            console.error("Onboarding Error:", err);
+            setError(err.message || "Failed to onboard.");
+        } finally {
+            setIsVerifying(false);
+        }
     };
 
     const steps = [
@@ -81,12 +110,13 @@ function OnboardingContent() {
             </div>
         </div>,
 
-        // Step 1: Identity Info
+        // Step 1: Identity Info & Auth
         <div key="identity" className="space-y-6">
             <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold mb-2">Identity Information</h2>
-                <p className="text-muted-foreground text-sm">This creates your Composite Identity Hash (CIH)</p>
+                <h2 className="text-2xl font-bold mb-2">Your Identity</h2>
+                <p className="text-muted-foreground text-sm">Define your Climate Identity Hash (CIH).</p>
             </div>
+            {error && <div className="p-3 bg-red-100 text-red-600 rounded-md text-sm text-center">{error}</div>}
             <div className="space-y-4 max-w-md mx-auto">
                 <div>
                     <label className="text-sm font-medium mb-1 block">Entity Name</label>
@@ -138,13 +168,14 @@ function OnboardingContent() {
             </div>
             <div>
                 <h2 className="text-2xl font-bold mb-2">
-                    {isVerifying ? "Generating Identity Hash..." : "Ready to Launch"}
+                    {isVerifying ? "Creating & Connecting to Supabase..." : "Ready to Launch"}
                 </h2>
                 <p className="text-muted-foreground text-sm max-w-sm mx-auto">
                     {isVerifying
-                        ? "Binding your entity + asset into a Composite Identity Hash"
-                        : "Your identity will be cryptographically bound to the CarbonCore infrastructure"}
+                        ? "Registering your account and binding your entity and asset securely."
+                        : "Your identity will be cryptographically bound and securely stored."}
                 </p>
+                {error && <div className="p-3 mt-4 bg-red-100 text-red-600 rounded-md text-sm text-center">{error}</div>}
             </div>
             {!isVerifying && (
                 <div className="bg-card border border-border rounded-xl p-4 max-w-sm mx-auto text-left space-y-2">

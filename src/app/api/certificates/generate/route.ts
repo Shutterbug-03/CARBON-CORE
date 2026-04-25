@@ -1,230 +1,94 @@
-/**
- * Certificate Generation API
- * Generates carbon credit certificates with QR codes and audit trails
- */
-
 import { NextRequest, NextResponse } from "next/server";
-import jsPDF from "jspdf";
-import QRCode from "qrcode";
-
-// Certificate data interface
-interface CertificateData {
-  entityName: string;
-  entityId: string;
-  entityType: "FARMER" | "COMPANY" | "COOPERATIVE";
-  assetDescription: string;
-  assetType: "LAND" | "SOLAR" | "WIND" | "BIOGAS" | "OTHER";
-  carbonImpact: number; // in tCO2e
-  confidence: number; // 0-100
-  startDate: string;
-  endDate: string;
-  dataPoints: {
-    value: number;
-    unit: string;
-    trustScore: "HIGH" | "MEDIUM" | "LOW";
-  }[];
-}
-
-// Generate unique certificate ID
-function generateCertificateId(): string {
-  const prefix = "CC";
-  const timestamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).substr(2, 4).toUpperCase();
-  return `${prefix}-${timestamp}-${random}`;
-}
-
-// Generate verification URL for QR code
-function getVerificationUrl(certificateId: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://carbonupi.com";
-  return `${baseUrl}/verify/${certificateId}`;
-}
-
-// Generate PDF certificate
-async function generatePDF(
-  certId: string,
-  data: CertificateData,
-  qrCodeDataUrl: string
-): Promise<Buffer> {
-  const doc = new jsPDF({
-    orientation: "landscape",
-    unit: "mm",
-    format: "a4",
-  });
-
-  // --- HEADER ---
-  doc.setFillColor(2, 2, 2); // #020202
-  doc.rect(0, 0, 297, 40, "F");
-
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(24);
-  doc.setFont("helvetica", "bold");
-  doc.text("CARBON CREDIT CERTIFICATE", 148.5, 20, { align: "center" });
-
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("ISO 14064-3 Verified Carbon Offset", 148.5, 30, { align: "center" });
-
-  // --- CERTIFICATE ID & QR ---
-  doc.setTextColor(0, 0, 0);
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text(`Certificate ID: ${certId}`, 20, 55);
-
-  doc.setFontSize(9);
-  doc.setFont("helvetica", "normal");
-  doc.setTextColor(100, 100, 100);
-  doc.text(`Issued: ${new Date().toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  })}`, 20, 62);
-
-  // QR Code (right side)
-  doc.addImage(qrCodeDataUrl, "PNG", 240, 50, 40, 40);
-  doc.setFontSize(7);
-  doc.text("Scan to verify", 260, 95, { align: "center" });
-
-  // --- ENTITY INFORMATION ---
-  doc.setFontSize(14);
-  doc.setTextColor(0, 0, 0);
-  doc.setFont("helvetica", "bold");
-  doc.text("ENTITY INFORMATION", 20, 75);
-
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text(`Entity Name: ${data.entityName}`, 20, 85);
-  doc.text(`Entity ID: ${data.entityId}`, 20, 92);
-  doc.text(`Entity Type: ${data.entityType}`, 20, 99);
-
-  // --- ASSET INFORMATION ---
-  doc.setFontSize(14);
-  doc.setFont("helvetica", "bold");
-  doc.text("ASSET INFORMATION", 20, 113);
-
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text(`Asset: ${data.assetDescription}`, 20, 123);
-  doc.text(`Type: ${data.assetType}`, 20, 130);
-  doc.text(`Period: ${data.startDate} to ${data.endDate}`, 20, 137);
-
-  // --- CARBON IMPACT (Highlighted) ---
-  doc.setFillColor(16, 185, 129); // Emerald-500
-  doc.roundedRect(20, 148, 100, 25, 3, 3, "F");
-
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("CARBON IMPACT", 70, 156, { align: "center" });
-
-  doc.setFontSize(20);
-  doc.text(`${data.carbonImpact.toFixed(2)} tCO2e`, 70, 167, { align: "center" });
-
-  // --- CONFIDENCE SCORE ---
-  doc.setFillColor(241, 245, 249); // slate-100
-  doc.roundedRect(130, 148, 60, 25, 3, 3, "F");
-
-  doc.setTextColor(0, 0, 0);
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Confidence", 160, 156, { align: "center" });
-
-  doc.setFontSize(16);
-  doc.setFont("helvetica", "bold");
-  doc.text(`${data.confidence}%`, 160, 167, { align: "center" });
-
-  // --- DATA POINTS SUMMARY ---
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(0, 0, 0);
-  doc.text("DATA VALIDATION", 20, 185);
-
-  doc.setFontSize(9);
-  doc.setFont("helvetica", "normal");
-  doc.text(`Total Data Points: ${data.dataPoints.length}`, 20, 193);
-
-  const highTrust = data.dataPoints.filter((d) => d.trustScore === "HIGH").length;
-  const mediumTrust = data.dataPoints.filter((d) => d.trustScore === "MEDIUM").length;
-  const lowTrust = data.dataPoints.filter((d) => d.trustScore === "LOW").length;
-
-  doc.text(`High Trust: ${highTrust} | Medium: ${mediumTrust} | Low: ${lowTrust}`, 20, 200);
-
-  // --- FOOTER ---
-  doc.setFillColor(241, 245, 249);
-  doc.rect(0, 190, 297, 20, "F");
-
-  doc.setFontSize(8);
-  doc.setTextColor(100, 100, 100);
-  doc.text("This certificate is digitally verified and complies with ISO 14064-3 standards.", 148.5, 198, { align: "center" });
-  doc.text(`Verification URL: ${getVerificationUrl(certId)}`, 148.5, 203, { align: "center" });
-
-  // Convert to buffer
-  const pdfOutput = doc.output("arraybuffer");
-  return Buffer.from(pdfOutput);
-}
+import { createAdminClient } from "@/lib/supabase/admin";
+import { mrvEngine } from "@/lib/engines/mrv-engine";
+import { generateGICPdf } from "@/lib/pdf/gic-generator";
+import type { CDIFInputData } from "@/lib/types/mrv";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const input: CDIFInputData = await request.json();
 
-    // Validate required fields
-    const {
-      entityName,
-      entityId,
-      entityType,
-      assetDescription,
-      assetType,
-      carbonImpact,
-      confidence,
-      startDate,
-      endDate,
-      dataPoints,
-    }: CertificateData = body;
-
-    if (!entityName || !carbonImpact) {
+    // Basic validation
+    if (!input?.projectIdentity || !input?.metrics) {
       return NextResponse.json(
-        { error: "Missing required fields: entityName, carbonImpact" },
+        { error: "Invalid CDIF format. Required: projectIdentity, physicalAsset, monitoringPeriod, metrics" },
         { status: 400 }
       );
     }
 
-    // Generate certificate ID
-    const certificateId = generateCertificateId();
+    // 1. Run Calculations
+    const mrvResult = mrvEngine.calculate(input);
 
-    // Generate QR code
-    const verificationUrl = getVerificationUrl(certificateId);
-    const qrCodeDataUrl = await QRCode.toDataURL(verificationUrl, {
-      width: 400,
-      margin: 1,
-      color: {
-        dark: "#020202",
-        light: "#FFFFFF",
-      },
-    });
+    // 2. Generate 3-page PDF
+    const pdfBuffer = await generateGICPdf(input, mrvResult);
 
-    // Generate PDF
-    const pdfBuffer = await generatePDF(certificateId, body, qrCodeDataUrl);
+    // 3. Save to Supabase using admin client (bypasses RLS)
+    let pdfUrl: string | null = null;
+    let dbError: string | null = null;
 
-    // TODO: Save certificate metadata to database
-    // TODO: Upload PDF to cloud storage (S3/Supabase Storage)
-    // For now, return PDF as base64
+    try {
+      const supabase = createAdminClient();
 
-    const pdfBase64 = pdfBuffer.toString("base64");
+      // Upload PDF to storage
+      const { data: storageData, error: storageErr } = await supabase.storage
+        .from("certificates")
+        .upload(`gic/${mrvResult.gicId}.pdf`, pdfBuffer, {
+          contentType: "application/pdf",
+          upsert: true,
+        });
 
+      if (storageErr) {
+        console.warn("Storage upload failed:", storageErr.message);
+      } else {
+        const { data: urlData } = supabase.storage
+          .from("certificates")
+          .getPublicUrl(storageData.path);
+        pdfUrl = urlData.publicUrl;
+      }
+
+      // Insert certificate record — use a placeholder entity_id for MVP
+      // (no user auth required for demo mode)
+      const { error: insertErr } = await supabase.from("certificates").upsert({
+        certificate_id: mrvResult.gicId,
+        entity_id: null, // MVP: no auth — entity linked post-onboarding
+        project_name: input.projectIdentity.projectName,
+        project_type: input.physicalAsset.assetType,
+        location: input.projectIdentity.location,
+        carbon_reduced: mrvResult.step7NetVerifiedReduction,
+        vintage: new Date().getFullYear().toString(),
+        issued_date: new Date().toISOString(),
+        verifier: "GreenPe Digital MRV Engine v1.0",
+        status: "ISSUED",
+        pdf_url: pdfUrl,
+        metadata: { input, mrvResult },
+      }, { onConflict: "certificate_id" });
+
+      if (insertErr) {
+        console.warn("DB insert failed:", insertErr.message);
+        dbError = insertErr.message;
+      }
+    } catch (e: unknown) {
+      console.warn("Supabase unavailable (check .env.local keys):", e instanceof Error ? e.message : e);
+      dbError = "Supabase not configured";
+    }
+
+    // 4. Return result — always succeed with PDF even if DB fails
     return NextResponse.json({
       success: true,
-      certificateId,
-      verificationUrl,
-      pdf: `data:application/pdf;base64,${pdfBase64}`,
-      metadata: {
-        entityName,
-        carbonImpact,
-        confidence,
-        issuedAt: new Date().toISOString(),
-      },
+      certificateId: mrvResult.gicId,
+      verificationUrl: mrvResult.publicVerificationUrl,
+      pdfUrl: pdfUrl,
+      // Inline base64 fallback when storage is unavailable
+      pdf: pdfUrl ?? `data:application/pdf;base64,${pdfBuffer.toString("base64")}`,
+      metadata: mrvResult,
+      dbSaved: !dbError,
+      dbError: dbError,
     });
-  } catch (err) {
-    console.error("Certificate generation error:", err);
-    const message = err instanceof Error ? err.message : "Failed to generate certificate";
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch (err: unknown) {
+    console.error("MRV Processing error:", err);
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }

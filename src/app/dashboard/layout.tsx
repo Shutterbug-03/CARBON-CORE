@@ -7,7 +7,7 @@ import {
     LayoutDashboard, FileCheck, Cpu, Settings as SettingsIcon,
     Globe, Shield, ChevronRight, LogOut, Menu, X, Search,
     Layers, Database, MapPin, User, Activity, Zap, Bot,
-    Sun, Moon, Plus
+    Sun, Moon, Plus, FlaskConical
 } from "lucide-react";
 import { useApp } from "@/providers/app-provider";
 import { useAgents } from "@/providers/agent-provider";
@@ -33,6 +33,7 @@ function PageContent({ children }: { children: React.ReactNode }) {
 
 const platformNav = [
     { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { path: "/dashboard/mrv", icon: FlaskConical, label: "MRV Engine" },
     { path: "/dashboard/certificates", icon: FileCheck, label: "GIC Registry" },
     { path: "/dashboard/pipeline", icon: Cpu, label: "Infrastructure View" },
     { path: "/dashboard/sources", icon: Database, label: "Ingest Sources" },

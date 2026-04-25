@@ -1,14 +1,13 @@
 /**
  * AI Agent Chat — Streaming API
- * Streams real-time responses from any agent using Greeni Agent Framework
+ * Streams real-time responses from any agent using OpenAI
  */
 
 // Hard cap: Vercel will kill this function after 30s regardless
 export const maxDuration = 30;
 
 import { NextRequest } from "next/server";
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate } from "@langchain/core/prompts";
+import OpenAI from "openai";
 import { getCoreMemory } from "@/lib/agents/core-memory";
 import fs from 'fs';
 import path from 'path';
@@ -205,14 +204,6 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        const model = new ChatOpenAI({
-            modelName: "gpt-4o-mini",
-            temperature: 0.1, // Lower temperature for more factual adherence
-            maxTokens: 2048,
-            apiKey,
-            streaming: true,
-        });
-
         // Combine: Base -> Strict Context -> Web (Context) -> Memory (Priority) -> History
         const finalSystemMessage =
             baseSystemPrompt +
@@ -221,15 +212,20 @@ export async function POST(request: NextRequest) {
             memoryBlock + // Memory AFTER web to override it
             historyContext;
 
-        console.log("--- SYSTEM PROMPT ---");
-        console.log(finalSystemMessage.slice(0, 500) + "..."); // Log for debugging
+        const openai = new OpenAI({
+            apiKey,
+        });
 
-        const prompt = ChatPromptTemplate.fromMessages([
-            SystemMessagePromptTemplate.fromTemplate(finalSystemMessage),
-            HumanMessagePromptTemplate.fromTemplate("{input}"),
-        ]);
-
-        const chain = prompt.pipe(model);
+        const stream = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            temperature: 0.1,
+            max_tokens: 2048,
+            messages: [
+                { role: "system", content: finalSystemMessage },
+                { role: "user", content: message }
+            ],
+            stream: true,
+        });
 
         // Log to core memory
         try {
@@ -247,22 +243,17 @@ export async function POST(request: NextRequest) {
             // Memory logging is non-critical
         }
 
-        // Stream the response
+        // Stream the response to client using Server-Sent Events (SSE)
         const encoder = new TextEncoder();
-        const stream = new ReadableStream({
+        const readableStream = new ReadableStream({
             async start(controller) {
                 try {
-                    const response = await chain.stream({ input: message });
                     let fullText = "";
-                    for await (const chunk of response) {
-                        const text = typeof chunk.content === "string"
-                            ? chunk.content
-                            : Array.isArray(chunk.content)
-                                ? chunk.content.map((c: unknown) => (c as { text?: string }).text || "").join("")
-                                : "";
-                        if (text) {
-                            fullText += text;
-                            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
+                    for await (const chunk of stream) {
+                        const content = chunk.choices[0]?.delta?.content || "";
+                        if (content) {
+                            fullText += content;
+                            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: content })}\n\n`));
                         }
                     }
 
@@ -282,7 +273,7 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        return new Response(stream, {
+        return new Response(readableStream, {
             headers: {
                 "Content-Type": "text/event-stream",
                 "Cache-Control": "no-cache",

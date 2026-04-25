@@ -2,13 +2,11 @@
  * GreenPe Agent System — Base Agent Class
  * 
  * Abstract base for all 13 specialized agents.
- * Uses Greeni Agent Framework for LLM reasoning.
+ * Uses OpenAI API directly.
  * Integrates with Core Memory and A2A Bus.
  */
 
-import { ChatOpenAI } from '@langchain/openai';
-import { ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate } from '@langchain/core/prompts';
-import { StringOutputParser } from '@langchain/core/output_parsers';
+import OpenAI from 'openai';
 import type { AgentConfig, AgentTelemetry, AgentTask, AgentResult, AgentSkill, AgentStatus, AgentActivity } from './types';
 import { getCoreMemory, type CoreMemoryStore } from './core-memory';
 import { getA2ABus, type A2AMessageBus } from './a2a-bus';
@@ -21,7 +19,8 @@ export abstract class BaseAgent {
     readonly skills: AgentSkill[];
     readonly systemPrompt: string;
 
-    protected model: ChatOpenAI;
+    protected openaiClient: OpenAI;
+    protected modelName: string;
     protected memory: CoreMemoryStore;
     protected bus: A2AMessageBus;
 
@@ -46,16 +45,13 @@ export abstract class BaseAgent {
         this.domain = config.domain;
         this.skills = config.skills;
         this.systemPrompt = config.systemPrompt;
+        this.modelName = config.model || 'gpt-4o-mini';
 
-        // Initialize Greeni AI model
+        // Initialize OpenAI model
         const apiKey = process.env.OPENAI_API_KEY;
-        const hasKey = apiKey && !apiKey.startsWith('sk-your');
 
-        this.model = new ChatOpenAI({
-            modelName: config.model || 'gpt-4o-mini',
-            temperature: 0.2,
-            maxTokens: 1024,
-            apiKey: hasKey ? apiKey : undefined,
+        this.openaiClient = new OpenAI({
+            apiKey: apiKey || '',
         });
 
         this.memory = getCoreMemory();
@@ -91,7 +87,7 @@ export abstract class BaseAgent {
     }
 
     /**
-     * Run LLM chain with the agent's system prompt
+     * Run LLM inference with the agent's system prompt
      */
     protected async runChain(userMessage: string): Promise<string> {
         if (!this.hasLLM) {
@@ -100,13 +96,17 @@ export abstract class BaseAgent {
 
         const start = Date.now();
         try {
-            const prompt = ChatPromptTemplate.fromMessages([
-                SystemMessagePromptTemplate.fromTemplate(this.systemPrompt),
-                HumanMessagePromptTemplate.fromTemplate('{input}'),
-            ]);
+            const completion = await this.openaiClient.chat.completions.create({
+                model: this.modelName,
+                temperature: 0.2,
+                max_tokens: 1024,
+                messages: [
+                    { role: 'system', content: this.systemPrompt },
+                    { role: 'user', content: userMessage }
+                ]
+            });
 
-            const chain = prompt.pipe(this.model).pipe(new StringOutputParser());
-            const result = await chain.invoke({ input: userMessage });
+            const result = completion.choices[0]?.message?.content || "";
 
             const duration = Date.now() - start;
             this._totalResponseMs += duration;
