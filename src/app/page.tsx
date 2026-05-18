@@ -44,11 +44,11 @@ export default function LandingPage() {
               <Link href="/about" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>About</Link>
             </div>
             <div className="flex-1 flex items-center justify-end gap-3 md:gap-4 shrink-0">
-              <Link href="/dashboard">
+              <Link href="/signin">
                 <button className={`rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-foreground font-bold cursor-pointer shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 duration-700 hover:bg-white/20 hover:border-white/40 ${
                   isScrolled ? "px-6 h-9 text-sm" : "px-8 h-11 text-base"
                 }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>
-                  Dashboard
+                  Get Started
                 </button>
               </Link>
               <Link href="/contact">
@@ -93,9 +93,14 @@ export default function LandingPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-300">
-            <Link href="/contact">
+            <Link href="/signin">
               <Button size="lg" className="rounded-full px-8 h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95">
-                Let's Build Together
+                Get Started Free
+              </Button>
+            </Link>
+            <Link href="/signin">
+              <Button size="lg" variant="outline" className="rounded-full px-8 h-12 font-bold">
+                Sign In
               </Button>
             </Link>
           </div>

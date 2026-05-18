@@ -3,10 +3,11 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function POST(request: NextRequest) {
   try {
-    const { role, name, registrationId, region, assetType, assetDesc } = await request.json();
+    const { role, type, userType, name, registrationId, region, assetType, assetDesc } = await request.json();
+    const actualRole = role || type || userType || "USER";
 
-    if (!name || !role) {
-      return NextResponse.json({ error: "Name and role are required" }, { status: 400 });
+    if (!name) {
+      return NextResponse.json({ error: "Name is required" }, { status: 400 });
     }
 
     const supabase = createAdminClient();
@@ -16,7 +17,7 @@ export async function POST(request: NextRequest) {
       .from("entities")
       .insert({
         user_id: null,
-        type: role.toUpperCase(),
+        type: actualRole.toUpperCase(),
         name,
         registration_id: registrationId || null,
         location: { region: region || "India" },

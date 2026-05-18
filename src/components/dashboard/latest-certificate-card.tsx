@@ -10,15 +10,17 @@ import { generateGreenImpactCertificate } from "@/lib/generate-certificate";
 import { CertificatePreviewDialog } from "./certificate-preview-dialog";
 import { fetchSolarData, calculateCarbonOffset, SolarData } from "@/lib/solar-api";
 import { cn } from "@/lib/utils";
+import { useApp } from "@/providers/app-provider";
 
 export function LatestCertificateCard() {
+    const { user } = useApp();
     const [solarData, setSolarData] = useState<SolarData | null>(null);
     const [loading, setLoading] = useState(true);
     const [currentTab, setCurrentTab] = useState<'certificate' | 'origin' | 'audit'>('certificate');
 
-    // Khavda Renewable Energy Park Coordinates
-    const LAT = 23.83;
-    const LON = 69.75;
+    // Use entity location if available, else Khavda defaults
+    const LAT = (user.entity?.location as any)?.lat ?? 23.83;
+    const LON = (user.entity?.location as any)?.lng ?? 69.75;
     const CAPACITY_MW = 50;
     const AREA_M2 = 250000;
 
@@ -40,19 +42,26 @@ export function LatestCertificateCard() {
         ? calculateCarbonOffset(solarData, CAPACITY_MW, AREA_M2)
         : { dailyGenerationkWh: 0, carbonOffsetTons: 0 };
 
+    // Build initialData from logged-in user — fallback to demo values if not onboarded yet
+    const entityName = user.entity?.name ?? "GreenPe Demo User";
+    const assetType = user.asset?.type ?? "Solar";
+    const region = (user.entity?.location as any)?.region ?? "Gujarat, India";
+    const gstin = user.entity?.registrationId ?? "XX-DEMO-GSTIN";
+    const certId = user.identityHash ? user.identityHash.slice(-12).toUpperCase() : "GP-DEMO-VX";
+
     const initialData = {
-        certificateId: "GP-8847-VX",
-        projectName: "Adani Solar Park IV",
-        projectType: "Solar Power",
-        location: "Khavda, Gujarat, India",
-        gstin: "24AAACA4311M1Z5",
-        industrialId: "IND-SOL-004",
-        carbonReduced: loading ? "207.14" : carbonStats.carbonOffsetTons.toFixed(2),
-        vintage: "2024",
+        certificateId: certId,
+        projectName: `${entityName} — ${assetType} Asset`,
+        projectType: assetType,
+        location: region,
+        gstin: gstin,
+        industrialId: `IND-${assetType.slice(0,3).toUpperCase()}-001`,
+        carbonReduced: loading ? "—" : carbonStats.carbonOffsetTons.toFixed(2),
+        vintage: new Date().getFullYear().toString(),
         issuedDate: new Date().toISOString().split('T')[0],
-        verifier: "CarbonCore AI Auditor",
-        recipientName: "Adani Green Energy",
-        recipientAddress: "Ahmedabad, Gujarat"
+        verifier: "GreenPe AI Auditor",
+        recipientName: entityName,
+        recipientAddress: region,
     };
 
     return (

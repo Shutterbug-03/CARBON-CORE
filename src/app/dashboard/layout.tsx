@@ -194,7 +194,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }, []);
 
     useEffect(() => {
-        if (!user.isOnboarded) router.push("/onboarding");
+        if (!user.isOnboarded) router.push("/signin");
     }, [user.isOnboarded, router]);
 
     return (
