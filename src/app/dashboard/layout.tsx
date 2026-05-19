@@ -8,7 +8,7 @@ import {
     Globe, Shield, ChevronRight, LogOut, Menu, X, Search,
     Database, MapPin, User, Zap, Bot,
     Sun, Moon, Plus, FlaskConical, Upload, BarChart3, Landmark,
-    Building2, Wallet, Cpu, MessageCircle
+    Building2, Wallet, Cpu, MessageCircle, LineChart
 } from "lucide-react";
 import { useApp } from "@/providers/app-provider";
 import { useAgents } from "@/providers/agent-provider";
@@ -41,6 +41,7 @@ const coreModules = [
     { path: "/dashboard/compliance", icon: Globe, label: "Compliance Suite" },
     { path: "/dashboard/emissions", icon: BarChart3, label: "Scope 1/2/3" },
     { path: "/dashboard/finance", icon: Wallet, label: "Financial Services" },
+    { path: "/dashboard/market", icon: LineChart, label: "Carbon Exchange" },
     { path: "/dashboard/government", icon: Landmark, label: "Government" },
 ];
 
