@@ -8,10 +8,17 @@ export async function GET(request: NextRequest) {
 
     const supabase = createAdminClient();
 
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const isValidUuid = entityId ? uuidRegex.test(entityId) : false;
+
     // 1. Query Certificates (count and total carbon reduced)
     let certQuery = supabase.from("certificates").select("carbon_reduced", { count: "exact" });
     if (entityId) {
-      certQuery = certQuery.eq("current_owner_id", entityId);
+      if (isValidUuid) {
+        certQuery = certQuery.eq("current_owner_id", entityId);
+      } else {
+        certQuery = certQuery.eq("current_owner_id", "00000000-0000-0000-0000-000000000000");
+      }
     }
     const { data: certs, count: certCount, error: certError } = await certQuery;
 
@@ -26,22 +33,26 @@ export async function GET(request: NextRequest) {
     // 2. Query Active Assets/Data Sources
     let sourceCount = 0;
     if (entityId) {
-      // Find assets owned by this entity, then get their data_sources
-      const { data: assets, error: assetError } = await supabase
-        .from("assets")
-        .select("id")
-        .eq("entity_id", entityId);
+      if (isValidUuid) {
+        // Find assets owned by this entity, then get their data_sources
+        const { data: assets, error: assetError } = await supabase
+          .from("assets")
+          .select("id")
+          .eq("entity_id", entityId);
 
-      if (!assetError && assets && assets.length > 0) {
-        const assetIds = assets.map(a => a.id);
-        const { count, error: countError } = await supabase
-          .from("data_sources")
-          .select("id", { count: "exact", head: true })
-          .in("asset_id", assetIds);
-        
-        if (!countError) {
-          sourceCount = count || 0;
+        if (!assetError && assets && assets.length > 0) {
+          const assetIds = assets.map(a => a.id);
+          const { count, error: countError } = await supabase
+            .from("data_sources")
+            .select("id", { count: "exact", head: true })
+            .in("asset_id", assetIds);
+          
+          if (!countError) {
+            sourceCount = count || 0;
+          }
         }
+      } else {
+        sourceCount = 0;
       }
     } else {
       const { count, error: sourceError } = await supabase
