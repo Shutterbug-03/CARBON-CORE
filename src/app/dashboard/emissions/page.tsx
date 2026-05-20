@@ -1,8 +1,7 @@
-"use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useApp } from "@/providers/app-provider";
 import {
   BarChart3, Factory, Zap, Truck, TrendingDown, TrendingUp,
   ArrowDown, ArrowUp, Flame, Droplets, Building2
@@ -71,7 +70,7 @@ function ScopeCard({ title, icon: Icon, color, total, change, sources }: {
             <div key={s.name}>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-foreground/50">{s.name}</span>
-                <span className="font-mono font-bold">{s.value} {s.unit}</span>
+                <span className="font-mono font-bold">{s.value.toFixed(2)} {s.unit}</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-foreground/[0.06]">
                 <div className={`h-full rounded-full ${color.includes("red") ? "bg-red-400" : color.includes("amber") ? "bg-amber-400" : "bg-blue-400"}`} style={{ width: `${s.pct}%` }} />
@@ -85,7 +84,31 @@ function ScopeCard({ title, icon: Icon, color, total, change, sources }: {
 }
 
 export default function EmissionsPage() {
-  const totalEmissions = scopeData.scope1.total + scopeData.scope2.total + scopeData.scope3.total;
+  const { user } = useApp();
+  const [data, setData] = useState<typeof scopeData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadEmissions() {
+      try {
+        const res = await fetch(`/api/emissions/summary?entityId=${user.entity?.id || ""}`);
+        if (res.ok) {
+          const summary = await res.json();
+          setData(summary);
+        }
+      } catch (err) {
+        console.error("Failed to load emissions summary:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    if (user.entity?.id) {
+      loadEmissions();
+    }
+  }, [user.entity?.id]);
+
+  const activeData = data || scopeData;
+  const totalEmissions = activeData.scope1.total + activeData.scope2.total + activeData.scope3.total;
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-6 animate-in fade-in duration-500">
@@ -108,9 +131,9 @@ export default function EmissionsPage() {
           <div className="flex-1" />
           <div className="flex gap-3">
             {[
-              { label: "Scope 1", value: scopeData.scope1.total, color: "bg-red-400" },
-              { label: "Scope 2", value: scopeData.scope2.total, color: "bg-amber-400" },
-              { label: "Scope 3", value: scopeData.scope3.total, color: "bg-blue-400" },
+              { label: "Scope 1", value: activeData.scope1.total, color: "bg-red-400" },
+              { label: "Scope 2", value: activeData.scope2.total, color: "bg-amber-400" },
+              { label: "Scope 3", value: activeData.scope3.total, color: "bg-blue-400" },
             ].map((s) => (
               <div key={s.label} className="text-center px-4 py-2 rounded-xl bg-foreground/[0.03] border border-foreground/[0.06]">
                 <div className="flex items-center gap-2 mb-1"><div className={`w-2 h-2 rounded-full ${s.color}`} /><span className="text-[10px] text-foreground/40">{s.label}</span></div>
@@ -141,9 +164,9 @@ export default function EmissionsPage() {
 
       {/* Three Scope Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <ScopeCard title="Scope 1 — Direct" icon={Flame} color="text-red-400" {...scopeData.scope1} />
-        <ScopeCard title="Scope 2 — Electricity" icon={Zap} color="text-amber-400" {...scopeData.scope2} />
-        <ScopeCard title="Scope 3 — Value Chain" icon={Truck} color="text-blue-400" {...scopeData.scope3} />
+        <ScopeCard title="Scope 1 — Direct" icon={Flame} color="text-red-400" {...activeData.scope1} />
+        <ScopeCard title="Scope 2 — Electricity" icon={Zap} color="text-amber-400" {...activeData.scope2} />
+        <ScopeCard title="Scope 3 — Value Chain" icon={Truck} color="text-blue-400" {...activeData.scope3} />
       </div>
 
       {/* GIC Integration Note */}

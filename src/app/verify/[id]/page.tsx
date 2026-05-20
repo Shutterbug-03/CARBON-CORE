@@ -1,21 +1,44 @@
 import { Shield, CheckCircle2, Calendar, Building2 } from "lucide-react";
+import { createAdminClient } from "@/lib/supabase/admin";
 
-// This would come from database in production
-function getCertificateData(id: string) {
-  // Simulated data - replace with database query
-  return {
-    id,
-    valid: true,
-    entityName: "Sample Entity",
-    carbonImpact: 12.5,
-    issuedAt: new Date().toISOString(),
-    status: "VERIFIED",
-    verificationHash: "0x" + id.split("").reverse().join(""),
-  };
+// Fetch certificate dynamically from Supabase database
+async function getCertificateData(id: string) {
+  try {
+    const supabase = createAdminClient();
+    const { data: cert, error } = await supabase
+      .from("certificates")
+      .select(`
+        *,
+        entities (
+          name
+        )
+      `)
+      .eq("certificate_id", id)
+      .maybeSingle();
+
+    if (error || !cert) {
+      console.warn("Certificate not found in database:", id, error?.message);
+      return { id, valid: false };
+    }
+
+    return {
+      id: cert.certificate_id,
+      valid: true,
+      entityName: cert.entities?.name || cert.metadata?.input?.projectIdentity?.companyName || "Verified Entity",
+      carbonImpact: Number(cert.carbon_reduced),
+      issuedAt: cert.issued_date,
+      status: cert.status,
+      verificationHash: cert.metadata?.mrvResult?.gicHash || cert.id,
+      pdfUrl: cert.pdf_url,
+    };
+  } catch (err) {
+    console.error("Error fetching certificate data:", err);
+    return { id, valid: false };
+  }
 }
 
-export default function VerifyPage({ params }: { params: { id: string } }) {
-  const cert = getCertificateData(params.id);
+export default async function VerifyPage({ params }: { params: { id: string } }) {
+  const cert = await getCertificateData(params.id);
 
   if (!cert.valid) {
     return (
@@ -28,7 +51,7 @@ export default function VerifyPage({ params }: { params: { id: string } }) {
             Certificate Not Found
           </h1>
           <p className="text-slate-600 mt-2">
-            The certificate ID <code className="bg-slate-100 px-2 py-1 rounded">{params.id}</code> could not be verified.
+            The certificate ID <code className="bg-slate-100 px-2 py-1 rounded">{params.id}</code> could not be verified or is not active in our database.
           </p>
         </div>
       </div>
@@ -128,12 +151,22 @@ export default function VerifyPage({ params }: { params: { id: string } }) {
               </div>
             </div>
 
-            {/* Status Badge */}
-            <div className="pt-4 border-t border-slate-200">
+            {/* Status Badge & PDF Download */}
+            <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
               <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full font-bold text-sm">
                 <CheckCircle2 size={16} />
                 {cert.status}
               </div>
+              {cert.pdfUrl && (
+                <a
+                  href={cert.pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200"
+                >
+                  Download Official PDF
+                </a>
+              )}
             </div>
           </div>
 
@@ -159,3 +192,4 @@ export default function VerifyPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+

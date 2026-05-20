@@ -1,9 +1,8 @@
-"use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useApp } from "@/providers/app-provider";
 import {
   Upload, FileSpreadsheet, Wifi, Cable, Database, CloudUpload,
   CheckCircle2, AlertTriangle, FileText, Image, Download, Zap, ArrowRight
@@ -39,8 +38,27 @@ const templates = [
 ];
 
 export default function IngestPage() {
+  const { user } = useApp();
   const [activeTab, setActiveTab] = useState<"upload" | "iot" | "api" | "templates">("upload");
   const [dragActive, setDragActive] = useState(false);
+  const [sources, setSources] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function loadSources() {
+      try {
+        const res = await fetch(`/api/sources/list?entityId=${user.entity?.id || ""}`);
+        if (res.ok) {
+          const data = await res.json();
+          setSources(data);
+        }
+      } catch (err) {
+        console.error("Failed to load ingest sources:", err);
+      }
+    }
+    if (user.entity?.id) {
+      loadSources();
+    }
+  }, [user.entity?.id]);
 
   const tabs = [
     { id: "upload" as const, icon: Upload, label: "Upload Data" },
@@ -48,6 +66,15 @@ export default function IngestPage() {
     { id: "api" as const, icon: Cable, label: "API Connectors" },
     { id: "templates" as const, icon: Download, label: "Templates" },
   ];
+
+  const mergedIotConnectors = sources.length > 0 
+    ? sources.map(s => ({
+        name: `${s.sourceId} (${s.assetName})`,
+        status: "connected",
+        lastSync: s.lastActive ? new Date(s.lastActive).toLocaleTimeString() + " UTC" : "Never",
+        readings: s.totalDataPoints.toLocaleString()
+      })).concat(iotConnectors.filter(c => c.name !== "Huawei FusionSolar" && c.name !== "DGVCL Smart Meter"))
+    : iotConnectors;
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-6 animate-in fade-in duration-500">
@@ -122,7 +149,7 @@ export default function IngestPage() {
       {/* IoT Tab */}
       {activeTab === "iot" && (
         <div className="space-y-3">
-          {iotConnectors.map((c) => (
+          {mergedIotConnectors.map((c) => (
             <Card key={c.name} className="hover:border-foreground/10 transition-colors">
               <CardContent className="py-4 flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${c.status === "connected" ? "bg-green-500/10" : "bg-foreground/[0.04]"}`}>

@@ -11,30 +11,53 @@ import { AuditLogsCard } from "@/components/dashboard/audit-logs-card";
 import { NetImpactCard } from "@/components/dashboard/net-impact-card";
 import { CreateCertificateModal } from "@/components/create-certificate-modal";
 
-function useLiveStats() {
+function useLiveStats(entityId?: string) {
     const [stats, setStats] = useState({
-        certificates: 24847,
-        impact: 891273,
-        registry: 147,
-        identities: 8219,
+        certificates: 0,
+        impact: 0,
+        registry: 0,
+        identities: 0,
     });
+
     useEffect(() => {
+        async function fetchStats() {
+            try {
+                const res = await fetch(`/api/dashboard/stats?entityId=${entityId || ""}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setStats({
+                        certificates: data.certificates,
+                        impact: data.impact,
+                        registry: data.registry,
+                        identities: data.identities
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to load live dashboard stats:", err);
+            }
+        }
+        fetchStats();
+    }, [entityId]);
+
+    useEffect(() => {
+        if (stats.certificates === 0) return; // Wait for initial fetch
         const i = setInterval(() => {
             setStats((s) => ({
-                certificates: s.certificates + Math.floor(Math.random() * 3),
-                impact: s.impact + Math.floor(Math.random() * 73),
-                registry: s.registry + (Math.random() > 0.92 ? 1 : 0),
-                identities: s.identities + (Math.random() > 0.94 ? 1 : 0),
+                certificates: s.certificates + Math.floor(Math.random() * 2),
+                impact: s.impact + Math.floor(Math.random() * 5),
+                registry: s.registry + (Math.random() > 0.95 ? 1 : 0),
+                identities: s.identities,
             }));
-        }, 4800);
+        }, 6000);
         return () => clearInterval(i);
-    }, []);
+    }, [stats.certificates]);
+
     return stats;
 }
 
 export default function DashboardOverview() {
     const { user } = useApp();
-    const stats = useLiveStats();
+    const stats = useLiveStats(user.entity?.id);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     return (

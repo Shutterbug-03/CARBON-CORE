@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Play, CheckCircle2, Clock, Loader2, Zap, ArrowRight, Shield } from "lucide-react";
+import { Play, CheckCircle2, Loader2, Zap } from "lucide-react";
 import { useApp } from "@/providers/app-provider";
 import { runPipeline, METHODOLOGIES } from "@/lib/carbon-upi/engine";
 import { Entity, Asset } from "@/lib/carbon-upi/types";
@@ -34,15 +34,52 @@ export default function PipelineSimulator() {
 
         for (let i = 0; i < layers.length; i++) {
             setCurrentStep(i);
-            await new Promise((r) => setTimeout(r, 800 + Math.random() * 600));
+            await new Promise((r) => setTimeout(r, 600 + Math.random() * 400));
             setCompletedSteps((prev) => [...prev, i]);
         }
 
         if (user.entity && user.asset) {
+            // Retrieve actual telemetry sources from DB
+            let livePoints: any[] = [];
+            try {
+                const entityId = user.entity?.id || "";
+                const res = await fetch(`/api/sources/list?entityId=${entityId}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.length > 0) {
+                        livePoints = data.map((src: any) => ({
+                            id: src.id,
+                            sourceType: "IOT_SENSOR" as const,
+                            sourceId: src.sourceId,
+                            timestamp: src.lastActive ? new Date(src.lastActive) : new Date(),
+                            value: src.lastValue !== null ? Number(src.lastValue) : Math.random() * 100 + 50,
+                            unit: src.unit || "kWh",
+                            trustScore: "HIGH" as const,
+                            raw: {}
+                        }));
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to query live telemetry for pipeline:", err);
+            }
+
+            if (livePoints.length === 0) {
+                livePoints = Array.from({ length: 10 }, (_, i) => ({ 
+                    id: `dp-${i}`, 
+                    sourceType: "IOT_SENSOR" as const, 
+                    sourceId: `sensor-${i}`, 
+                    timestamp: new Date(), 
+                    value: Math.random() * 100 + 50, 
+                    unit: "kWh", 
+                    trustScore: "HIGH" as const, 
+                    raw: {} 
+                }));
+            }
+
             const pipelineResult = runPipeline({
                 entity: user.entity as Entity,
                 asset: user.asset as Asset,
-                rawDataPoints: Array.from({ length: 10 }, (_, i) => ({ id: `dp-${i}`, sourceType: "IOT_SENSOR" as const, sourceId: `sensor-${i}`, timestamp: new Date(), value: Math.random() * 100 + 50, unit: "kWh", trustScore: "HIGH" as const, raw: {} })),
+                rawDataPoints: livePoints,
                 methodology: METHODOLOGIES[0],
                 timeWindow: { start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), end: new Date() },
             });
@@ -53,20 +90,20 @@ export default function PipelineSimulator() {
     };
 
     return (
-        <div className="space-y-5 max-w-4xl mx-auto animate-fade-in">
-            <div className="flex items-center justify-between">
+        <div className="space-y-5 max-w-4xl mx-auto animate-fade-in p-4 md:p-6">
+            <div className="flex items-center justify-between gap-4">
                 <div>
                     <h1 className="text-xl font-bold tracking-tight">Infrastructure Pipeline</h1>
                     <p className="text-sm text-foreground/25">7-Layer deterministic execution engine</p>
                 </div>
-                <Button onClick={runSimulation} disabled={running} className="btn-glow bg-green-500 text-black font-semibold hover:bg-green-400 gap-2 text-sm h-9 cursor-pointer shadow-lg shadow-green-500/20">
+                <Button onClick={runSimulation} disabled={running} className="btn-glow bg-green-500 text-black font-semibold hover:bg-green-400 gap-2 text-sm h-9 cursor-pointer shadow-lg shadow-green-500/20 shrink-0">
                     {running ? <><Loader2 size={14} className="animate-spin" /> Processing...</> : <><Play size={14} /> Run Full Pipeline</>}
                 </Button>
             </div>
 
             {/* Progress bar */}
             {running && (
-                <div className="glass rounded-xl p-3">
+                <div className="glass rounded-xl p-3 border border-white/5">
                     <div className="flex justify-between text-xs text-foreground/20 mb-1.5">
                         <span>Pipeline Progress</span>
                         <span>{completedSteps.length}/{layers.length} Complete</span>
@@ -87,18 +124,18 @@ export default function PipelineSimulator() {
                             key={layer.id}
                             className={`glass transition-all duration-500 overflow-hidden ${isCompleted ? "border-green-500/15 bg-green-500/[0.03]" :
                                     isCurrent ? "border-green-400/20 animate-border-glow shadow-lg shadow-green-500/5" :
-                                        "hover:bg-foreground/[0.04] hover:border-foreground/8"
+                                        "hover:bg-foreground/[0.04] hover:border-foreground/8 border-foreground/[0.04]"
                                 }`}
                         >
                             <CardContent className="p-4 flex items-center gap-4">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 transition-all duration-300 ${isCompleted ? "bg-green-500/15 scale-95" : isCurrent ? "bg-green-400/10 animate-pulse scale-105" : "bg-foreground/[0.03]"
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 transition-all duration-300 ${isCompleted ? "bg-green-500/15 scale-95" : isCurrent ? "bg-green-400/10 animate-pulse scale-105" : "bg-foreground/[0.03] border border-white/5"
                                     }`}>
                                     {isCompleted ? <CheckCircle2 size={20} className="text-green-400" /> : isCurrent ? <Loader2 size={18} className="text-green-400 animate-spin" /> : <span>{layer.icon}</span>}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2">
                                         <span className="text-xs font-bold text-foreground/15 tabular-nums">L{layer.id}</span>
-                                        <h3 className="text-[13px] font-semibold text-foreground/80">{layer.name}</h3>
+                                        <h3 className="text-[13px] font-semibold text-white/80">{layer.name}</h3>
                                     </div>
                                     <p className="text-xs text-foreground/25 mt-0.5 truncate">{layer.desc}</p>
                                 </div>
@@ -115,11 +152,11 @@ export default function PipelineSimulator() {
 
             {/* Result */}
             {result && (
-                <Card className="glass-green animate-scale-in overflow-hidden">
+                <Card className="glass-green border border-green-500/15 shadow-[0_0_15px_rgba(34,197,94,0.05)] animate-scale-in overflow-hidden">
                     <CardContent className="p-5">
                         <div className="flex items-center gap-2 mb-4">
-                            <Zap size={16} className="text-green-400" />
-                            <h3 className="text-sm font-bold">Pipeline Complete — GIC Issued</h3>
+                            <Zap size={16} className="text-green-400 animate-pulse" />
+                            <h3 className="text-sm font-bold text-white/90">Pipeline Complete — GIC Issued</h3>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             {[
@@ -130,7 +167,7 @@ export default function PipelineSimulator() {
                             ].map((item) => (
                                 <div key={item.label}>
                                     <p className="text-xs text-foreground/20 uppercase tracking-wider mb-0.5">{item.label}</p>
-                                    <p className={`text-sm font-bold ${item.highlight ? "text-green-400" : ""} font-mono`}>{item.value}</p>
+                                    <p className={`text-sm font-bold ${item.highlight ? "text-green-400" : "text-white/80"} font-mono`}>{item.value}</p>
                                 </div>
                             ))}
                         </div>

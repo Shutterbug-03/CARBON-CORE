@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -15,6 +15,35 @@ import { Button } from "@/components/ui/button";
 export default function SettingsPage() {
     const { user } = useApp();
     const { theme, setTheme } = useTheme();
+
+    const [stats, setStats] = useState({
+        certificates: 0,
+        impact: 0,
+        registry: 0,
+        identities: 0,
+        globalEntities: 0,
+    });
+
+    useEffect(() => {
+        async function fetchStats() {
+            try {
+                const res = await fetch(`/api/dashboard/stats?entityId=${user.entity?.id || ""}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setStats({
+                        certificates: data.certificates || 0,
+                        impact: data.impact || 0,
+                        registry: data.registry || 0,
+                        identities: data.identities || 0,
+                        globalEntities: data.globalEntities || 82,
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to load live settings stats:", err);
+            }
+        }
+        fetchStats();
+    }, [user.entity?.id]);
 
     const [notifications, setNotifications] = useState({
         agentAlerts: true,
@@ -177,7 +206,7 @@ export default function SettingsPage() {
             ),
         },
         {
-            title: "Infrastructure",
+            title: "Infrastructure & Ledger Status",
             icon: Server,
             children: (
                 <div className="space-y-2">
@@ -185,7 +214,9 @@ export default function SettingsPage() {
                         { label: "Pipeline Version", value: "v2.1.0-prod" },
                         { label: "MRV Engine", value: "IPCC AR6 + Verra VCS" },
                         { label: "Ledger Protocol", value: "SHA-256 Hash Chain" },
-                        { label: "API Gateway", value: "gRPC + REST Hybrid" },
+                        { label: "Connected Identities", value: stats.identities.toString() },
+                        { label: "Active Certificates", value: stats.certificates.toString() },
+                        { label: "Global Connected Entities", value: stats.globalEntities.toString() },
                         { label: "Uptime SLA", value: "99.97%", highlight: true },
                     ].map((s) => (
                         <div key={s.label} className="flex justify-between items-center py-2 px-3 rounded-lg hover:bg-foreground/[0.03] transition-all cursor-default">

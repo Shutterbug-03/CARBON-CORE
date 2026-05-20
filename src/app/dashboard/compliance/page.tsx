@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Globe, FileDown, CheckCircle2, Clock, AlertCircle, Shield, FileText,
-  AlertTriangle, ArrowRight, Calendar, Target, TrendingDown, BarChart3
+  AlertTriangle, Target, TrendingDown, BarChart3
 } from "lucide-react";
+import { useApp } from "@/providers/app-provider";
 
 const complianceTabs = [
   { id: "cbam" as const, label: "EU CBAM", badge: "MVP" },
@@ -17,8 +18,7 @@ const complianceTabs = [
   { id: "global" as const, label: "Global (GRI/CDP/TCFD)", badge: "Phase 3" },
 ];
 
-// CBAM Data
-const cbamQuarters = [
+const initialCbamQuarters = [
   { quarter: "Q1 FY2024-25", status: "Submitted", products: 4, tCO2e: "12.4", deadline: "31-Jul-2024" },
   { quarter: "Q2 FY2024-25", status: "Submitted", products: 3, tCO2e: "9.8", deadline: "31-Oct-2024" },
   { quarter: "Q3 FY2024-25", status: "Ready", products: 5, tCO2e: "14.1", deadline: "31-Jan-2025" },
@@ -55,17 +55,47 @@ const frameworks = [
 ];
 
 export default function CompliancePage() {
+  const { user } = useApp();
   const [activeTab, setActiveTab] = useState<"cbam" | "brsr" | "ccts" | "gcp" | "global">("cbam");
+  const [quarters, setQuarters] = useState(initialCbamQuarters);
+  const [offsetPct, setOffsetPct] = useState(67);
+  const [cbamCost, setCbamCost] = useState(760);
+
+  useEffect(() => {
+    async function loadEmissionsSummary() {
+      try {
+        const entityId = user.entity?.id || "";
+        const res = await fetch(`/api/emissions/summary?entityId=${entityId}`);
+        if (res.ok) {
+          const data = await res.json();
+          const dbOffset = data.scope2?.offsetSaved || 0;
+          if (dbOffset > 0) {
+            const reduction = Math.min(99, Math.round((dbOffset / 14.066) * 100)) || 67;
+            setOffsetPct(reduction);
+            setCbamCost(Math.round(2300 * (1 - reduction / 100)));
+            setQuarters(prev => prev.map(q => 
+              q.quarter === "Q3 FY2024-25" 
+                ? { ...q, tCO2e: dbOffset.toFixed(1) } 
+                : q
+            ));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load emissions summary for compliance page:", err);
+      }
+    }
+    loadEmissionsSummary();
+  }, [user.entity?.id]);
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-6 animate-in fade-in duration-500">
+    <div className="max-w-[1200px] mx-auto space-y-6 animate-in fade-in duration-500 p-4 md:p-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-4 flex-col sm:flex-row">
         <div>
           <h1 className="text-2xl font-black tracking-tight">Compliance Suite</h1>
           <p className="text-sm text-foreground/40 mt-1">One-click generation of every climate compliance document — same GIC/MRV data powers all reports</p>
         </div>
-        <Button className="bg-green-500 text-black font-semibold hover:bg-green-400 gap-2 text-sm shadow-lg shadow-green-500/20"><FileDown size={14} /> Export All Reports</Button>
+        <Button className="bg-green-500 text-black font-semibold hover:bg-green-400 gap-2 text-sm shadow-lg shadow-green-500/20 cursor-pointer"><FileDown size={14} /> Export All Reports</Button>
       </div>
 
       {/* Tabs */}
@@ -84,10 +114,10 @@ export default function CompliancePage() {
           {/* Price Impact Banner */}
           <Card className="bg-gradient-to-r from-amber-500/5 to-transparent border-amber-500/10">
             <CardContent className="py-4 flex flex-col md:flex-row items-start md:items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center"><Target size={18} className="text-amber-400" /></div>
+              <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20"><Target size={18} className="text-amber-400" /></div>
               <div className="flex-1">
                 <p className="text-sm font-bold">EU Carbon Price Impact</p>
-                <p className="text-xs text-foreground/30">At €100/tonne, CBAM cost for your textile exports: <span className="text-amber-400 font-bold">€760/quarter</span> · Solar GICs reduce this by <span className="text-green-400 font-bold">67%</span></p>
+                <p className="text-xs text-foreground/30">At €100/tonne, CBAM cost for your textile exports: <span className="text-amber-400 font-bold">€{cbamCost}/quarter</span> · Solar GICs reduce this by <span className="text-green-400 font-bold">{offsetPct}%</span></p>
               </div>
               <Badge className="bg-green-500/10 text-green-400 border-green-500/20">GIC Offset Active</Badge>
             </CardContent>
@@ -97,7 +127,7 @@ export default function CompliancePage() {
           <div>
             <p className="text-xs tracking-[0.2em] text-foreground/20 uppercase font-semibold mb-3">Quarterly CBAM Reports</p>
             <div className="grid md:grid-cols-2 gap-3">
-              {cbamQuarters.map((q) => (
+              {quarters.map((q) => (
                 <Card key={q.quarter} className="hover:border-foreground/10 transition-colors">
                   <CardContent className="py-4 flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${q.status === "Submitted" ? "bg-green-500/10" : q.status === "Ready" ? "bg-blue-500/10" : "bg-amber-500/10"}`}>
@@ -116,7 +146,7 @@ export default function CompliancePage() {
 
           {/* EU Benchmark Comparison */}
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><BarChart3 size={16} className="text-foreground/30" /> Product Carbon Intensity vs EU Benchmark</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2 text-white/80"><BarChart3 size={16} className="text-foreground/30" /> Product Carbon Intensity vs EU Benchmark</CardTitle></CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {cbamProducts.map((p) => (
@@ -135,13 +165,13 @@ export default function CompliancePage() {
 
           {/* Data Gaps */}
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><AlertTriangle size={16} className="text-amber-400" /> Data Gap Identifier</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2 text-white/80"><AlertTriangle size={16} className="text-amber-400" /> Data Gap Identifier</CardTitle></CardHeader>
             <CardContent className="space-y-2">
               {cbamDataGaps.map((g, i) => (
                 <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border ${g.severity === "high" ? "border-red-500/20 bg-red-500/[0.02]" : g.severity === "medium" ? "border-amber-500/20 bg-amber-500/[0.02]" : "border-foreground/[0.04]"}`}>
                   <div className={`w-2 h-2 rounded-full shrink-0 ${g.severity === "high" ? "bg-red-400" : g.severity === "medium" ? "bg-amber-400" : "bg-foreground/15"}`} />
                   <div className="flex-1"><p className="text-xs text-foreground/60">{g.item}</p></div>
-                  <Button size="sm" variant="outline" className="text-xs h-7 shrink-0">{g.action}</Button>
+                  <Button size="sm" variant="outline" className="text-xs h-7 shrink-0 cursor-pointer">{g.action}</Button>
                 </div>
               ))}
             </CardContent>
@@ -179,10 +209,10 @@ export default function CompliancePage() {
                       {s.status === "complete" ? <CheckCircle2 size={14} className="text-green-400" /> : s.status === "on-track" ? <Clock size={14} className="text-blue-400" /> : <AlertCircle size={14} className="text-amber-400" />}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{s.section} — {s.title}</p>
+                      <p className="text-sm font-medium text-white/80">{s.section} — {s.title}</p>
                       <div className="flex items-center gap-2 mt-1"><div className="flex-1 h-1.5 rounded-full bg-foreground/[0.06]"><div className="h-full rounded-full bg-green-500" style={{ width: `${pct}%` }} /></div><span className="text-[10px] text-foreground/25">{s.completed}/{s.total}</span></div>
                     </div>
-                    <Button size="sm" variant="outline" className="text-xs h-7">Fill</Button>
+                    <Button size="sm" variant="outline" className="text-xs h-7 cursor-pointer">Fill</Button>
                   </CardContent>
                 </Card>
               );
@@ -231,7 +261,7 @@ export default function CompliancePage() {
                     <Globe size={18} className={fw.status === "complete" ? "text-green-400" : fw.status === "on-track" ? "text-blue-400" : "text-amber-400"} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold">{fw.name}</p>
+                    <p className="text-sm font-semibold text-white/80">{fw.name}</p>
                     <p className="text-xs text-foreground/30">{fw.sub}</p>
                     <div className="flex items-center gap-2 mt-1.5"><div className="flex-1 h-1.5 rounded-full bg-foreground/[0.06]"><div className="h-full rounded-full bg-green-500" style={{ width: `${pct}%` }} /></div><span className="text-[10px] text-foreground/25 font-mono">{pct}%</span></div>
                   </div>

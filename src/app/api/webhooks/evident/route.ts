@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/admin'; // Assuming this exists or will exist
+import { createAdminClient } from '@/lib/supabase/admin';
+
 
 /**
  * Evident Registry Webhook Endpoint

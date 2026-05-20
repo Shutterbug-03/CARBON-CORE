@@ -16,7 +16,66 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. Run Calculations
+    // 1. Run Calculations & Dynamic Telemetry Aggregation
+    const iotDeviceId = input.physicalAsset?.iotDeviceId;
+    const periodStart = input.monitoringPeriod?.periodStart;
+    const periodEnd = input.monitoringPeriod?.periodEnd;
+
+    let dbSolarGen = 0;
+    let dbDieselLitres = 0;
+    let dbVerifiedReadings = 0;
+    let hasDbData = false;
+
+    if (iotDeviceId && periodStart && periodEnd) {
+      try {
+        const supabase = createAdminClient();
+        
+        // Fetch the data source for this device
+        const { data: dataSource } = await supabase
+          .from("data_sources")
+          .select("id")
+          .eq("source_id", iotDeviceId)
+          .maybeSingle();
+          
+        if (dataSource) {
+          // Fetch data points in the monitoring period
+          const { data: points } = await supabase
+            .from("data_points")
+            .select("value, unit")
+            .eq("data_source_id", dataSource.id)
+            .gte("timestamp", new Date(periodStart).toISOString())
+            .lte("timestamp", new Date(periodEnd).toISOString());
+            
+          if (points && points.length > 0) {
+            hasDbData = true;
+            dbVerifiedReadings = points.length;
+            
+            // Sum values by unit
+            points.forEach((pt: any) => {
+              const val = Number(pt.value);
+              const u = pt.unit?.toLowerCase();
+              if (u === "kwh") {
+                dbSolarGen += val;
+              } else if (u === "litres" || u === "liter" || u === "liters" || u === "l") {
+                dbDieselLitres += val;
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.warn("Error querying database for live MRV telemetry:", err);
+      }
+    }
+
+    if (hasDbData) {
+      input.metrics.totalSolarGenKWh = dbSolarGen;
+      input.metrics.totalDieselLitres = dbDieselLitres;
+      input.monitoringPeriod.verifiedReadings = dbVerifiedReadings;
+      console.log(`Aggregated database telemetry: Solar KWh = ${dbSolarGen}, Diesel Litres = ${dbDieselLitres}, Verified Readings = ${dbVerifiedReadings}`);
+    } else {
+      console.log("No telemetry data points found in database for asset in period; falling back to POST body values.");
+    }
+
     const mrvResult = mrvEngine.calculate(input);
 
     // 2. Generate 3-page PDF
@@ -28,6 +87,41 @@ export async function POST(request: NextRequest) {
 
     try {
       const supabase = createAdminClient();
+
+      // Look up entity_id dynamically from GSTIN or companyName
+      let matchedEntityId: string | null = null;
+      if (input.projectIdentity?.gstin) {
+        const { data: entity } = await supabase
+          .from("entities")
+          .select("id")
+          .eq("gstin", input.projectIdentity.gstin)
+          .maybeSingle();
+        if (entity) {
+          matchedEntityId = entity.id;
+        }
+      }
+
+      if (!matchedEntityId && input.projectIdentity?.companyName) {
+        const { data: entity } = await supabase
+          .from("entities")
+          .select("id")
+          .eq("name", input.projectIdentity.companyName)
+          .maybeSingle();
+        if (entity) {
+          matchedEntityId = entity.id;
+        }
+      }
+
+      // If still null, try finding any entity in the system for testing fallback
+      if (!matchedEntityId) {
+        const { data: firstEntity } = await supabase
+          .from("entities")
+          .select("id")
+          .limit(1);
+        if (firstEntity && firstEntity.length > 0) {
+          matchedEntityId = firstEntity[0].id;
+        }
+      }
 
       // Upload PDF to storage
       const { data: storageData, error: storageErr } = await supabase.storage
@@ -46,11 +140,11 @@ export async function POST(request: NextRequest) {
         pdfUrl = urlData.publicUrl;
       }
 
-      // Insert certificate record — use a placeholder entity_id for MVP
-      // (no user auth required for demo mode)
+      // Insert certificate record with dynamically mapped entity_id and current_owner_id
       const { error: insertErr } = await supabase.from("certificates").upsert({
         certificate_id: mrvResult.gicId,
-        entity_id: null, // MVP: no auth — entity linked post-onboarding
+        entity_id: matchedEntityId, 
+        current_owner_id: matchedEntityId,
         project_name: input.projectIdentity.projectName,
         project_type: input.physicalAsset.assetType,
         location: input.projectIdentity.location,

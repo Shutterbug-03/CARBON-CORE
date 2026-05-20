@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,6 +32,27 @@ export default function AccountPage() {
   const { user } = useApp();
   const [activeTab, setActiveTab] = useState<"identity" | "devices" | "team">("identity");
   const [copied, setCopied] = useState(false);
+  const [devices, setDevices] = useState<any[]>([]);
+  const [loadingDevices, setLoadingDevices] = useState(true);
+
+  useEffect(() => {
+    async function loadDevices() {
+      try {
+        const res = await fetch(`/api/sources/list?entityId=${user.entity?.id || ""}`);
+        if (res.ok) {
+          const data = await res.json();
+          setDevices(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch devices:", err);
+      } finally {
+        setLoadingDevices(false);
+      }
+    }
+    if (user.entity?.id) {
+      loadDevices();
+    }
+  }, [user.entity?.id]);
 
   const cihId = `GP-IND-2024-GJ-${user.entity?.registrationId?.slice(-6) || "044821"}-SOL`;
 
@@ -48,6 +67,15 @@ export default function AccountPage() {
     { id: "devices" as const, icon: Smartphone, label: "Devices" },
     { id: "team" as const, icon: Users, label: "My Team" },
   ];
+
+  const devicesList = devices.length > 0 ? devices.map(d => ({
+    id: d.sourceId,
+    type: d.type === "IOT_SENSOR" ? "IoT Sensor" : "CSV Ingestion",
+    model: `${d.assetName} (${d.assetType})`,
+    lastData: d.lastActive ? new Date(d.lastActive).toLocaleTimeString() + " UTC" : "Never",
+    status: d.totalDataPoints > 0 ? "online" : "offline",
+    fingerprint: d.id.slice(0, 4) + "..." + d.id.slice(-4),
+  })) : registeredDevices;
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-6 animate-in fade-in duration-500">
@@ -143,10 +171,10 @@ export default function AccountPage() {
       {activeTab === "devices" && (
         <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <p className="text-sm text-foreground/40">{registeredDevices.length} registered devices</p>
+            <p className="text-sm text-foreground/40">{devicesList.length} registered devices</p>
             <Button size="sm" className="gap-2 bg-green-500 text-black hover:bg-green-400"><Plus size={14} /> Add Device</Button>
           </div>
-          {registeredDevices.map((d) => (
+          {devicesList.map((d) => (
             <Card key={d.id} className="hover:border-foreground/10 transition-colors">
               <CardContent className="py-4 flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${d.status === "online" ? "bg-green-500/10" : "bg-red-500/10"}`}>
