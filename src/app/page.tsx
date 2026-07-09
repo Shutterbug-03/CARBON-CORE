@@ -112,36 +112,33 @@ export default function LandingPage() {
           navVisible ? "translate-y-0 opacity-100" : "-translate-y-24 opacity-0 pointer-events-none"
         }`}
       >
-        <div className="bg-white/80 dark:bg-slate-950/35 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-full px-5 md:px-6 py-1 shadow-[0_8px_32px_rgba(0,0,0,0.15)] flex justify-between items-center h-11 transition-all duration-300">
+        <div className="bg-white/20 dark:bg-black/25 backdrop-blur-md border border-white/25 dark:border-white/10 rounded-full px-6 py-1 shadow-[0_8px_32px_rgba(0,0,0,0.15)] flex justify-center items-center gap-6 md:gap-10 h-11 transition-all duration-300 w-full">
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <span className="font-display-lg text-sm md:text-base font-extrabold text-trust-navy dark:text-white tracking-tight select-none">
+          <div className="flex items-center">
+            <span className="font-display-lg text-sm md:text-base font-extrabold text-white tracking-tight select-none">
               GreenPE
             </span>
           </div>
           
           {/* Nav Links */}
-          <div className="hidden md:flex gap-5 items-center">
-            <a className="text-trust-navy/85 dark:text-white/85 hover:text-trust-navy dark:hover:text-white transition-colors font-label-md text-[11px] uppercase tracking-wider" href="#solutions">
+          <div className="hidden md:flex gap-6 items-center">
+            <a className="text-white/85 hover:text-white transition-colors font-label-md text-[11px] uppercase tracking-wider" href="#solutions">
               Solutions
             </a>
-            <Link className="text-trust-navy/85 dark:text-white/85 hover:text-trust-navy dark:hover:text-white transition-colors font-label-md text-[11px] uppercase tracking-wider" href="/dashboard">
+            <Link className="text-white/85 hover:text-white transition-colors font-label-md text-[11px] uppercase tracking-wider" href="/dashboard">
               Impact Dashboard
             </Link>
-            <a className="text-trust-navy/85 dark:text-white/85 hover:text-trust-navy dark:hover:text-white transition-colors font-label-md text-[11px] uppercase tracking-wider" href="#how-it-works">
+            <a className="text-white/85 hover:text-white transition-colors font-label-md text-[11px] uppercase tracking-wider" href="#how-it-works">
               How it Works
-            </a>
-            <a className="text-trust-navy/85 dark:text-white/85 hover:text-trust-navy dark:hover:text-white transition-colors font-label-md text-[11px] uppercase tracking-wider" href="#about-us">
-              About Us
             </a>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
-              className="text-trust-navy/80 dark:text-white/85 hover:text-trust-navy dark:hover:text-white transition-all p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10"
+              className="text-white/85 hover:text-white transition-all p-1 rounded-full hover:bg-white/10"
               aria-label="Toggle Theme"
             >
               <span className="material-symbols-outlined text-[16px] select-none">
@@ -150,7 +147,7 @@ export default function LandingPage() {
             </button>
 
             <Link href="/signin" className="hidden sm:block">
-              <button className="text-trust-navy/80 dark:text-white/85 hover:text-trust-navy dark:hover:text-white transition-all px-2 py-1 font-semibold font-label-md text-[11px] uppercase tracking-wider">
+              <button className="text-white/85 hover:text-white transition-all px-2 py-1 font-semibold font-label-md text-[11px] uppercase tracking-wider">
                 Login
               </button>
             </Link>
@@ -595,36 +592,186 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── SECTION 5: STATS, KEY METRICS & QUOTE ─── */}
-      <section className="py-24 bg-white dark:bg-slate-950 border-t border-outline-variant/15 transition-colors duration-300">
+      {/* ─── SECTION 5: THE PROCESS (TIMELINE) ─── */}
+      <section id="process" className="py-28 bg-white dark:bg-slate-950 border-t border-outline-variant/15 transition-colors duration-300">
         <div className="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop space-y-20">
           
-          {/* Stats Row */}
-          <div className="grid md:grid-cols-3 gap-12 items-start">
-            
-            {/* Stat 1 */}
-            <div className="space-y-4">
-              <div className="flex items-baseline gap-2">
-                <span className="material-symbols-outlined text-impact-green-vibrant text-[24px] select-none">arrow_downward</span>
-                <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.25em]">SCROLL DOWN</span>
+          {/* Title block */}
+          <div className="text-center space-y-4 max-w-2xl mx-auto">
+            <span className="bg-impact-green-vibrant/10 text-impact-green-deep dark:text-impact-green-vibrant px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider">
+              The Process
+            </span>
+            <h2 className="font-display-lg text-4xl md:text-5xl font-extrabold text-trust-navy dark:text-white tracking-tighter leading-tight">
+              GreenPE makes climate action verifiable and usable.
+            </h2>
+            <p className="text-secondary dark:text-slate-350 text-base">
+              We transform real-world activity into machine-readable, auditable proof using automated systems.
+            </p>
+          </div>
+
+          {/* Timeline container */}
+          <div className="relative">
+            {/* Central Vertical Line (hidden on mobile, centered on desktop) */}
+            <div className="absolute left-4 lg:left-1/2 top-0 bottom-0 w-0.5 bg-impact-green-vibrant/20 -translate-x-1/2 z-0" />
+
+            {/* Phase 1 */}
+            <div className="relative grid lg:grid-cols-12 gap-8 items-center mb-20 z-10">
+              {/* Content (Left column on desktop) */}
+              <div className="pl-10 lg:pl-0 lg:col-span-5 lg:text-right space-y-4 order-2 lg:order-1">
+                <div className="inline-flex items-center gap-2 bg-impact-green-vibrant/15 text-impact-green-deep dark:text-impact-green-vibrant px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                  <span>1</span>
+                  <span>PHASE ONE</span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-extrabold text-trust-navy dark:text-white">
+                  Data Ingestion
+                </h3>
+                <p className="text-secondary dark:text-slate-350 text-sm leading-relaxed max-w-md lg:ml-auto">
+                  Connect real data from smart meters, solar inverters, EV systems, and ERP / industrial systems.
+                </p>
               </div>
-              <h3 className="text-6xl md:text-7xl font-black text-trust-navy dark:text-white tracking-tight leading-none text-glow">
-                &gt;144k
-              </h3>
-              <p className="text-secondary dark:text-slate-350 text-sm leading-relaxed">
-                <span className="font-bold text-trust-navy dark:text-white">VERIFIED ACTIONS:</span> Customers rely on GreenPE to authenticate their positive climate impact.
-              </p>
+
+              {/* Center Indicator Circle */}
+              <div className="absolute left-4 lg:left-1/2 -translate-x-1/2 z-20 flex items-center justify-center top-0 lg:top-auto">
+                <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-900 border-2 border-impact-green-vibrant flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant shadow-md font-bold text-xs select-none">
+                  <span className="material-symbols-outlined text-[16px]">bolt</span>
+                </div>
+              </div>
+
+              {/* Visual card (Right column on desktop) */}
+              <div className="pl-10 lg:pl-0 lg:col-span-5 lg:col-start-8 order-3 space-y-4">
+                <div className="p-6 rounded-2xl border-2 border-dashed border-impact-green-vibrant/20 bg-[#FDFBF7]/60 dark:bg-slate-900/40 backdrop-blur-sm max-w-sm flex items-center gap-4 shadow-sm">
+                  <div className="w-10 h-10 rounded-xl bg-impact-green-vibrant/10 flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant select-none">
+                    <span className="material-symbols-outlined text-[20px]">database</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-trust-navy dark:text-white uppercase tracking-tight">Connected Assets</h4>
+                    <p className="text-[10px] text-secondary dark:text-slate-400 mt-0.5">24.5k Industrial Endpoints</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Stat 2 */}
-            <div className="space-y-4 md:col-span-2">
-              <div className="h-6" /> {/* Placeholder spacer */}
-              <h3 className="text-6xl md:text-7xl font-black text-trust-navy dark:text-white tracking-tight leading-none text-glow">
-                +90%
-              </h3>
-              <p className="text-secondary dark:text-slate-350 text-sm leading-relaxed max-w-md">
-                <span className="font-bold text-trust-navy dark:text-white">ACCURACY RATE:</span> Providing unmatched reliability in climate action verification.
-              </p>
+            {/* Phase 2 */}
+            <div className="relative grid lg:grid-cols-12 gap-8 items-center mb-20 z-10">
+              {/* Visual card (Left column on desktop) */}
+              <div className="pl-10 lg:pl-0 lg:col-span-5 lg:col-start-1 lg:text-right order-3 lg:order-1 flex lg:justify-end">
+                <div className="p-6 rounded-2xl border-2 border-dashed border-impact-green-vibrant/20 bg-[#FDFBF7]/60 dark:bg-slate-900/40 backdrop-blur-sm max-w-sm w-full space-y-3 shadow-sm">
+                  <div className="flex justify-between items-center text-[10px] font-bold text-trust-navy dark:text-white">
+                    <span className="tracking-wider uppercase">Cross-Check Validation</span>
+                    <span className="text-impact-green-deep dark:text-impact-green-vibrant">99.9% Match</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                    <div className="h-full bg-impact-green-vibrant rounded-full w-[99.9%]" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Center Indicator Circle */}
+              <div className="absolute left-4 lg:left-1/2 -translate-x-1/2 z-20 flex items-center justify-center top-0 lg:top-auto">
+                <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-900 border-2 border-impact-green-vibrant flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant shadow-md font-bold text-xs select-none">
+                  <span className="material-symbols-outlined text-[16px]">account_tree</span>
+                </div>
+              </div>
+
+              {/* Content (Right column on desktop) */}
+              <div className="pl-10 lg:pl-0 lg:col-span-5 lg:col-start-8 space-y-4 order-2">
+                <div className="inline-flex items-center gap-2 bg-impact-green-vibrant/15 text-impact-green-deep dark:text-impact-green-vibrant px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                  <span>2</span>
+                  <span>PHASE TWO</span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-extrabold text-trust-navy dark:text-white">
+                  Automated Verification
+                </h3>
+                <p className="text-secondary dark:text-slate-350 text-sm leading-relaxed max-w-md">
+                  We apply standardized methodologies to calculate emissions, measure reductions, and validate authenticity.
+                </p>
+              </div>
+            </div>
+
+            {/* Phase 3 */}
+            <div className="relative grid lg:grid-cols-12 gap-8 items-center mb-20 z-10">
+              {/* Content (Left column on desktop) */}
+              <div className="pl-10 lg:pl-0 lg:col-span-5 lg:text-right space-y-4 order-2 lg:order-1">
+                <div className="inline-flex items-center gap-2 bg-impact-green-vibrant/15 text-impact-green-deep dark:text-impact-green-vibrant px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                  <span>3</span>
+                  <span>PHASE THREE</span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-extrabold text-trust-navy dark:text-white">
+                  Generate GIC
+                </h3>
+                <p className="text-secondary dark:text-slate-350 text-sm leading-relaxed max-w-md lg:ml-auto">
+                  A digitally verifiable proof that the activity occurred, the impact is measured, and the data is auditable.
+                </p>
+              </div>
+
+              {/* Center Indicator Circle */}
+              <div className="absolute left-4 lg:left-1/2 -translate-x-1/2 z-20 flex items-center justify-center top-0 lg:top-auto">
+                <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-900 border-2 border-impact-green-vibrant flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant shadow-md font-bold text-xs select-none">
+                  <span className="material-symbols-outlined text-[16px]">verified</span>
+                </div>
+              </div>
+
+              {/* Visual card (Right column on desktop) */}
+              <div className="pl-10 lg:pl-0 lg:col-span-5 lg:col-start-8 order-3 space-y-4">
+                {/* Certificate visual */}
+                <div className="p-6 rounded-2xl border border-impact-green-vibrant/30 bg-[#FDFBF7] dark:bg-slate-900 shadow-lg max-w-sm space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-1">
+                      <h5 className="text-[10px] font-black text-impact-green-deep dark:text-impact-green-vibrant tracking-wider uppercase">
+                        Green Impact Certificate
+                      </h5>
+                      <p className="text-[8px] text-slate-400 font-mono">Serial No: GPE-2024-X88321</p>
+                    </div>
+                    <div className="w-8 h-8 rounded bg-impact-green-vibrant flex items-center justify-center text-white select-none">
+                      <span className="material-symbols-outlined text-[18px]">qr_code_2</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-baseline pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold">Verified Offset</span>
+                    <span className="text-lg font-black text-trust-navy dark:text-white">12,450 tCO2e</span>
+                  </div>
+                  <div className="bg-impact-green-vibrant/10 py-1.5 rounded-lg text-center text-[9px] font-black uppercase text-impact-green-deep dark:text-impact-green-vibrant tracking-widest">
+                    CRYPTOGRAPHICALLY SEALED
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Phase 4 */}
+            <div className="relative grid lg:grid-cols-12 gap-8 items-center z-10">
+              {/* Visual card (Left column on desktop) */}
+              <div className="pl-10 lg:pl-0 lg:col-span-5 lg:col-start-1 lg:text-right order-3 lg:order-1 flex lg:justify-end gap-2 flex-wrap">
+                <span className="px-3 py-1.5 rounded-full border border-outline-variant/30 bg-white/50 dark:bg-slate-900/30 text-[10px] font-bold text-trust-navy dark:text-white">
+                  CBAM Report
+                </span>
+                <span className="px-3 py-1.5 rounded-full border border-outline-variant/30 bg-white/50 dark:bg-slate-900/30 text-[10px] font-bold text-trust-navy dark:text-white">
+                  BRSR Filing
+                </span>
+                <span className="px-3 py-1.5 rounded-full border border-outline-variant/30 bg-white/50 dark:bg-slate-900/30 text-[10px] font-bold text-trust-navy dark:text-white">
+                  Carbon Registry
+                </span>
+              </div>
+
+              {/* Center Indicator Circle */}
+              <div className="absolute left-4 lg:left-1/2 -translate-x-1/2 z-20 flex items-center justify-center top-0 lg:top-auto">
+                <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-900 border-2 border-impact-green-vibrant flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant shadow-md font-bold text-xs select-none">
+                  <span className="material-symbols-outlined text-[16px]">exit_to_app</span>
+                </div>
+              </div>
+
+              {/* Content (Right column on desktop) */}
+              <div className="pl-10 lg:pl-0 lg:col-span-5 lg:col-start-8 space-y-4 order-2">
+                <div className="inline-flex items-center gap-2 bg-impact-green-vibrant/15 text-impact-green-deep dark:text-impact-green-vibrant px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                  <span>4</span>
+                  <span>PHASE FOUR</span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-extrabold text-trust-navy dark:text-white">
+                  Use the Output
+                </h3>
+                <p className="text-secondary dark:text-slate-350 text-sm leading-relaxed max-w-md">
+                  Export for ESG & BRSR reporting, CBAM compliance, carbon market readiness, or green financing.
+                </p>
+              </div>
             </div>
 
           </div>
