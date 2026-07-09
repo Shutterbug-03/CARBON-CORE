@@ -90,3 +90,38 @@ create policy "Users can insert own certificates" on public.certificates for ins
 insert into storage.buckets (id, name, public) values ('certificates', 'certificates', true);
 create policy "Certificates are publicly accessible" on storage.objects for select using (bucket_id = 'certificates');
 create policy "Users can upload certificates" on storage.objects for insert with check (bucket_id = 'certificates' and auth.role() = 'authenticated');
+
+-- 6. Pilot verification jobs (Beckn-ready verification rail)
+create table if not exists public.pilot_verification_jobs (
+  job_id text primary key,
+  certificate_id text,
+  beckn_transaction_id text,
+  status text not null,
+  input_payload jsonb not null,
+  cih_binding jsonb not null,
+  mrv_run jsonb,
+  audit_trail jsonb not null default '[]'::jsonb,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- 7. Pilot GIC documents
+create table if not exists public.pilot_certificates (
+  certificate_id text primary key,
+  job_id text references public.pilot_verification_jobs(job_id) on delete cascade,
+  status text not null,
+  gic_document jsonb not null,
+  pdf_url text,
+  issued_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- 8. Beckn request/response ledger
+create table if not exists public.pilot_beckn_transactions (
+  transaction_id text primary key,
+  action text not null,
+  direction text not null,
+  status text not null,
+  context_payload jsonb not null,
+  message_payload jsonb not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);

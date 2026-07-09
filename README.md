@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GreenPe Beckn-Ready Carbon UPI Pilot
 
-## Getting Started
+This repo now exposes a focused pilot slice for **India rooftop solar climate verification**:
 
-First, run the development server:
+- `CIH` identity binding
+- `CDIF` ingestion and normalization
+- deterministic rooftop-solar MRV
+- `GIC` issuance with public verification
+- Beckn provider routes for `search`, `select`, `init`, `confirm`, and `status`
+
+The goal is a **pilot-ready verification rail**, not a full marketplace.
+
+## Main routes
+
+- `/` - pilot landing page
+- `/dashboard` - primary pilot console
+- `/demo` - standalone upload and simulation console
+- `/verify/[id]` - public GIC verification page
+
+## API surface
+
+### Pilot verification
+
+- `POST /api/pilot/verify`
+- `GET /api/pilot/verify/[id]`
+- `GET /api/pilot/beckn-events`
+
+### Beckn provider adapter
+
+- `POST /api/beckn/search`
+- `POST /api/beckn/select`
+- `POST /api/beckn/init`
+- `POST /api/beckn/confirm`
+- `POST /api/beckn/status`
+
+### Workbook ingestion
+
+- `POST /api/mrv/upload`
+
+Use this to upload `.xlsx`, `.xls`, `.csv`, or `.json`, then pass the normalized payload into `/api/pilot/verify`.
+
+## Scripts
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+npm run test:pilot
+npm run lint:pilot
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Required for the full app:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+OPENAI_API_KEY=...
+```
 
-## Learn More
+Optional for durable pilot persistence:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+NEXT_PUBLIC_SUPABASE_URL=...
+SUPABASE_SERVICE_ROLE_KEY=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+BECKN_SHARED_SECRET=pilot-secret
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Without Supabase, the pilot still works using in-memory storage for the current server process.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Supabase notes
 
-## Deploy on Vercel
+The existing schema files contain the legacy MVP tables. For the Beckn-ready pilot, also apply the `pilot_*` tables added in `supabase/schema.sql` so verification jobs and Beckn transaction logs can persist cleanly.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Current scope
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- First vertical only: **India rooftop solar**
+- Deterministic MRV only for final verified impact
+- Registry, KYC, and Beckn network interactions remain sandbox-friendly
+- Broader dashboard modules still exist in the repo, but `/dashboard` is now the canonical pilot path

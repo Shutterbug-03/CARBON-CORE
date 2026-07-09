@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "verificationJob": {
+    "id": "job_solar_mock_backup",
+    "status": "ISSUED",
+    "cihBinding": {
+      "cihId": "8f8303f8a9a2a92a7e7d6b38c29202a0a202c4847e62a2928373b9d9994c2299",
+      "timestamp": "2026-06-04T01:20:00Z"
+    },
+    "mrvRun": {
+      "methodology": {
+        "id": "IN-ROOFTOP-SOLAR-V1",
+        "title": "India Rooftop Solar Verification"
+      },
+      "netCO2eAvoided": 14.86,
+      "trace": [
+        "Step 1: Gross generation = 17,540 kWh",
+        "Step 2: Corrected for data completeness (88/90 verified readings) = 17,150 kWh",
+        "Step 3: Applied grid emission factor 0.893 kgCO2/kWh = 15.31 tonnes",
+        "Step 4: Applied conservative UNFCCC adjustment (5%) = 14.54 tonnes",
+        "Step 5: Deducted diesel auxiliary emission offset = 14.86 tonnes net avoided"
+      ]
+    },
+    "gic": {
+      "id": "GIC-SOLAR-MOCK-9922",
+      "status": "ACTIVE",
+      "impact": {
+        "amount": 14.86,
+        "type": "AVOIDED",
+        "unit": "tCO2e"
+      },
+      "verification": {
+        "confidenceScore": 87,
+        "publicVerificationUrl": "http://localhost:3000/verify/GIC-SOLAR-MOCK-9922"
+      }
+    }
+  }
+}

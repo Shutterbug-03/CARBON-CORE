@@ -1,138 +1,81 @@
-import { Shield, CheckCircle2, Calendar, Building2 } from "lucide-react";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { Building2, Calendar, CheckCircle2, Shield } from "lucide-react";
 
-// Fetch certificate dynamically from Supabase database
-async function getCertificateData(id: string) {
-  try {
-    const supabase = createAdminClient();
-    const { data: cert, error } = await supabase
-      .from("certificates")
-      .select(`
-        *,
-        entities (
-          name
-        )
-      `)
-      .eq("certificate_id", id)
-      .maybeSingle();
+import { getVerificationResponse } from "@/lib/pilot/store";
 
-    if (error || !cert) {
-      console.warn("Certificate not found in database:", id, error?.message);
-      return { id, valid: false };
-    }
+export default async function VerifyPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const response = await getVerificationResponse(id);
 
-    return {
-      id: cert.certificate_id,
-      valid: true,
-      entityName: cert.entities?.name || cert.metadata?.input?.projectIdentity?.companyName || "Verified Entity",
-      carbonImpact: Number(cert.carbon_reduced),
-      issuedAt: cert.issued_date,
-      status: cert.status,
-      verificationHash: cert.metadata?.mrvResult?.gicHash || cert.id,
-      pdfUrl: cert.pdf_url,
-    };
-  } catch (err) {
-    console.error("Error fetching certificate data:", err);
-    return { id, valid: false };
-  }
-}
-
-export default async function VerifyPage({ params }: { params: { id: string } }) {
-  const cert = await getCertificateData(params.id);
-
-  if (!cert.valid) {
+  if (!response.valid || !response.certificate || !response.verificationJob) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
-            <Shield className="w-8 h-8 text-red-600" />
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
+        <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-lg">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+            <Shield className="h-8 w-8 text-red-600" />
           </div>
-          <h1 className="text-2xl font-bold mt-4 text-slate-900">
-            Certificate Not Found
-          </h1>
-          <p className="text-slate-600 mt-2">
-            The certificate ID <code className="bg-slate-100 px-2 py-1 rounded">{params.id}</code> could not be verified or is not active in our database.
+          <h1 className="mt-4 text-2xl font-bold text-slate-900">Certificate Not Found</h1>
+          <p className="mt-2 text-slate-600">
+            The certificate ID <code className="rounded bg-slate-100 px-2 py-1">{id}</code> could not be verified or
+            is not active in the pilot registry.
           </p>
         </div>
       </div>
     );
   }
 
+  const certificate = response.certificate;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-slate-100 p-4 md:p-8">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-full font-bold text-sm">
+      <div className="mx-auto max-w-3xl">
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-bold text-white">
             <CheckCircle2 size={20} />
-            VERIFIED CERTIFICATE
+            VERIFIED PILOT CERTIFICATE
           </div>
         </div>
 
-        {/* Main Card */}
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-          {/* Certificate Header */}
+        <div className="overflow-hidden rounded-2xl bg-white shadow-2xl">
           <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 p-8 text-white">
-            <h1 className="text-3xl font-black tracking-tight">
-              Carbon Credit Certificate
-            </h1>
-            <p className="text-emerald-100 mt-2 text-sm">
-              ISO 14064-3 Verified Carbon Offset
-            </p>
+            <h1 className="text-3xl font-black tracking-tight">Green Impact Certificate</h1>
+            <p className="mt-2 text-sm text-emerald-100">Issued from the GreenPe Beckn verification rail</p>
           </div>
 
-          {/* Certificate Details */}
-          <div className="p-8 space-y-6">
-            {/* Certificate ID */}
+          <div className="space-y-6 p-8">
             <div>
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                Certificate ID
-              </label>
-              <div className="mt-1 font-mono text-lg font-bold text-slate-900">
-                {cert.id}
-              </div>
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Certificate ID</label>
+              <div className="mt-1 font-mono text-lg font-bold text-slate-900">{certificate.id}</div>
             </div>
 
-            {/* Entity */}
             <div>
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                Issued To
-              </label>
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Issued To</label>
               <div className="mt-2 flex items-center gap-3">
-                <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-                  <Building2 className="w-5 h-5 text-emerald-600" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
+                  <Building2 className="h-5 w-5 text-emerald-600" />
                 </div>
                 <div>
-                  <div className="font-bold text-slate-900">
-                    {cert.entityName}
-                  </div>
-                  <div className="text-sm text-slate-500">Verified Entity</div>
+                  <div className="font-bold text-slate-900">{certificate.entity.companyName}</div>
+                  <div className="text-sm text-slate-500">{certificate.entity.gstin}</div>
                 </div>
               </div>
             </div>
 
-            {/* Carbon Impact */}
-            <div className="bg-emerald-50 rounded-xl p-6">
-              <label className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
-                Carbon Impact
-              </label>
+            <div className="rounded-xl bg-emerald-50 p-6">
+              <label className="text-xs font-bold uppercase tracking-wider text-emerald-700">Carbon Impact</label>
               <div className="mt-2 text-4xl font-black text-emerald-600">
-                {cert.carbonImpact} <span className="text-2xl">tCO2e</span>
+                {certificate.impact.amount} <span className="text-2xl">tCO2e</span>
               </div>
-              <div className="text-sm text-emerald-600 mt-1">
-                Tonnes of CO2 Equivalent
+              <div className="mt-1 text-sm text-emerald-600">
+                Confidence {certificate.verification.confidenceScore}/100
               </div>
             </div>
 
-            {/* Issued Date */}
             <div>
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                Issued On
-              </label>
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Issued On</label>
               <div className="mt-2 flex items-center gap-2 text-slate-700">
-                <Calendar className="w-4 h-4" />
+                <Calendar className="h-4 w-4" />
                 <span className="font-medium">
-                  {new Date(cert.issuedAt).toLocaleDateString("en-US", {
+                  {new Date(certificate.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
@@ -141,55 +84,39 @@ export default async function VerifyPage({ params }: { params: { id: string } })
               </div>
             </div>
 
-            {/* Verification Hash */}
             <div>
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                Verification Hash
-              </label>
-              <div className="mt-1 font-mono text-xs bg-slate-100 p-3 rounded break-all text-slate-700">
-                {cert.verificationHash}
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Verification Hash</label>
+              <div className="mt-1 break-all rounded bg-slate-100 p-3 font-mono text-xs text-slate-700">
+                {certificate.hash}
               </div>
             </div>
 
-            {/* Status Badge & PDF Download */}
-            <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
-              <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full font-bold text-sm">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-4">
+              <div className="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-sm font-bold text-green-700">
                 <CheckCircle2 size={16} />
-                {cert.status}
+                {certificate.status}
               </div>
-              {cert.pdfUrl && (
+              {response.pdfUrl ? (
                 <a
-                  href={cert.pdfUrl}
+                  href={response.pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200"
+                  className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white transition-colors duration-200 hover:bg-emerald-700"
                 >
                   Download Official PDF
                 </a>
-              )}
+              ) : null}
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="bg-slate-50 p-6 text-center border-t border-slate-200">
+          <div className="border-t border-slate-200 bg-slate-50 p-6 text-center">
             <p className="text-xs text-slate-600">
-              This certificate is digitally verified and complies with ISO 14064-3 standards.
-            </p>
-            <p className="text-xs text-slate-500 mt-2">
-              For inquiries, contact{" "}
-              <a href="mailto:verify@carbonupi.com" className="text-emerald-600 hover:underline">
-                verify@carbonupi.com
-              </a>
+              This pilot certificate is digitally verified, identity-bound through CIH, and issued from the GreenPe
+              Beckn verification rail.
             </p>
           </div>
-        </div>
-
-        {/* Powered By */}
-        <div className="text-center mt-8 text-sm text-slate-600">
-          Powered by <span className="font-bold">CARBON UPI</span> Platform
         </div>
       </div>
     </div>
   );
 }
-

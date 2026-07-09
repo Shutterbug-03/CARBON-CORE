@@ -20,10 +20,6 @@ export async function POST(request: Request) {
             .maybeSingle();
 
         if (orderError || !order) {
-            // For MVP UI functional testing without DB fallback:
-            if (String(orderId).startsWith("ord_")) {
-                return NextResponse.json({ success: true, message: "Mock trade executed successfully!" });
-            }
             return NextResponse.json({ error: "Order not found" }, { status: 404 });
         }
 
@@ -41,16 +37,7 @@ export async function POST(request: Request) {
             .maybeSingle();
 
         if (!buyerWallet) {
-             // Auto-seed buyer wallet with demo money to allow demo transactions
-             const { data: seeded, error: seedError } = await supabase
-                .from("wallets")
-                .insert({ entity_id: buyerEntityId, fiat_balance: 100000.00 })
-                .select()
-                .single();
-             if (seedError) {
-                 throw new Error("Could not initialize buyer wallet: " + seedError.message);
-             }
-             buyerWallet = seeded;
+             return NextResponse.json({ error: "Buyer wallet not found. Please create a wallet first." }, { status: 400 });
         }
 
         if (Number(buyerWallet.fiat_balance) < totalCost) {
@@ -76,20 +63,7 @@ export async function POST(request: Request) {
             .maybeSingle();
 
         if (!sellerWallet) {
-             // Auto-seed seller wallet if missing
-             const { data: seeded, error: seedError } = await supabase
-                .from("wallets")
-                .insert({ entity_id: order.entity_id, fiat_balance: 50000.00 })
-                .select()
-                .single();
-             if (seedError) {
-                 throw new Error("Could not initialize seller wallet: " + seedError.message);
-             }
-             sellerWallet = seeded;
-        }
-
-        if (!sellerWallet) {
-             throw new Error("Seller wallet could not be initialized");
+             return NextResponse.json({ error: "Seller wallet not found. Trade cannot proceed." }, { status: 400 });
         }
 
         const { error: creditErr } = await supabase.from("wallets")

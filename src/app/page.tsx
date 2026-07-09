@@ -1,375 +1,807 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Shield, Zap, FileCheck, ArrowRight, CheckCircle, Cpu, Layers, Lock, RefreshCw, BarChart, Server, Activity, Globe } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { useTheme } from "@/providers/theme-provider";
+
+const FAQItem = ({ question, answer }: { question: string; answer: string }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className="border-b border-impact-green-vibrant/20 pb-2 mb-2 group">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between text-left py-6 hover:text-impact-green-vibrant transition-colors focus:outline-none rounded-lg px-2"
+        aria-expanded={isOpen}
+      >
+        <span className="text-xl font-bold tracking-tight text-trust-navy dark:text-white group-hover:text-impact-green-vibrant dark:group-hover:text-impact-green-vibrant transition-colors">
+          {question}
+        </span>
+        <div
+          className={`h-8 w-8 rounded-full flex items-center justify-center bg-impact-green-vibrant/10 border border-impact-green-vibrant/20 transition-all duration-300 group-hover:bg-impact-green-vibrant/20 group-hover:border-impact-green-vibrant/40 ${
+            isOpen ? "bg-impact-green-deep border-impact-green-deep" : ""
+          }`}
+        >
+          <span
+            className={`material-symbols-outlined text-impact-green-vibrant transition-transform duration-500 ${
+              isOpen ? "rotate-180 text-white" : ""
+            }`}
+          >
+            expand_more
+          </span>
+        </div>
+      </button>
+      <div
+        className={`grid transition-all duration-500 ease-in-out px-2 ${
+          isOpen ? "grid-rows-[1fr] opacity-100 pb-6" : "grid-rows-[0fr] opacity-0 pb-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <p className="text-secondary dark:text-slate-300 text-base leading-relaxed pr-12 font-medium">
+            {answer}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function LandingPage() {
+  const { theme, toggleTheme } = useTheme();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      setIsScrolled(scrollPosition > 50);
+      setIsScrolled(window.scrollY > 20);
     };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.05,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("opacity-100", "translate-y-0");
+          entry.target.classList.remove("opacity-0", "translate-y-10");
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll(".reveal-card");
+    revealElements.forEach((el) => {
+      el.classList.add("opacity-0", "translate-y-10", "transition-all", "duration-700");
+      observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans">
-      {/* Header - Static to Pill on Scroll */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
-        isScrolled ? "py-3" : "py-6"
-      }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>
-        <nav className={`mx-auto transition-all duration-700 ${
+    <div className="min-h-screen bg-background text-on-background font-body-md selection:bg-impact-green-vibrant selection:text-white transition-colors duration-300">
+      {/* Top Navigation */}
+      <nav
+        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
           isScrolled
-            ? "max-w-fit bg-white/10 backdrop-blur-2xl border border-white/20 rounded-full px-6 py-3 shadow-xl shadow-black/10 scale-[0.98]"
-            : "max-w-7xl bg-transparent px-6 rounded-2xl scale-100"
-        }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>
-          <div className="flex items-center justify-between gap-4 w-full">
-            <div className="flex-1 flex justify-start">
-              <Link href="/" className="flex items-center gap-2">
-                <span className={`font-bold tracking-tight text-foreground transition-all duration-700 ${
-                  isScrolled ? "text-sm" : "text-lg"
-                }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>GreenPe</span>
+            ? "bg-surface-glass dark:bg-slate-950/80 backdrop-blur-3xl border-b border-outline-variant/20 shadow-md py-3"
+            : "bg-surface-glass/40 dark:bg-transparent backdrop-blur-md border-b border-outline-variant/10 py-5"
+        }`}
+      >
+        <div className="flex justify-between items-center h-14 px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto">
+          <div className="flex items-center gap-2">
+            <span className="font-display-lg text-headline-md font-extrabold text-trust-navy dark:text-white tracking-tight">
+              GreenPE
+            </span>
+          </div>
+          <div className="hidden md:flex gap-8 items-center">
+            <a
+              className="text-impact-green-deep dark:text-impact-green-vibrant font-bold border-b-2 border-impact-green-vibrant pb-1 font-label-md text-label-md"
+              href="#solutions"
+            >
+              Solutions
+            </a>
+            <Link
+              className="text-secondary dark:text-slate-300 font-medium hover:text-trust-navy dark:hover:text-white transition-colors font-label-md text-label-md"
+              href="/dashboard"
+            >
+              Impact Dashboard
+            </Link>
+            <a
+              className="text-secondary dark:text-slate-300 font-medium hover:text-trust-navy dark:hover:text-white transition-colors font-label-md text-label-md"
+              href="#how-it-works"
+            >
+              How it Works
+            </a>
+            <a
+              className="text-secondary dark:text-slate-300 font-medium hover:text-trust-navy dark:hover:text-white transition-colors font-label-md text-label-md"
+              href="#about-us"
+            >
+              About Us
+            </a>
+          </div>
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="text-secondary dark:text-slate-300 font-semibold hover:text-trust-navy dark:hover:text-white transition-all p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10"
+              aria-label="Toggle Theme"
+            >
+              <span className="material-symbols-outlined text-[20px] select-none">
+                {theme === "light" ? "dark_mode" : "light_mode"}
+              </span>
+            </button>
+
+            <Link href="/signin" className="hidden md:block">
+              <button className="text-secondary dark:text-slate-300 font-semibold hover:text-trust-navy dark:hover:text-white transition-all px-4 py-2 rounded-lg font-label-md text-label-md">
+                Login
+              </button>
+            </Link>
+            <Link href="/dashboard">
+              <button className="bg-impact-green-vibrant text-white font-bold py-3 px-6 rounded-full hover:bg-impact-green-deep transition-all scale-100 active:scale-95 duration-200 shadow-lg shadow-impact-green-vibrant/20 font-label-md text-label-md">
+                Get Started
+              </button>
+            </Link>
+
+            {/* Mobile Menu Icon */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden text-secondary dark:text-slate-300 font-semibold hover:text-trust-navy dark:hover:text-white transition-all p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10"
+              aria-label="Toggle Mobile Menu"
+            >
+              <span className="material-symbols-outlined text-[24px]">
+                {mobileMenuOpen ? "close" : "menu"}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu Drawer */}
+        {mobileMenuOpen && (
+          <div className="md:hidden absolute top-full left-0 w-full bg-white dark:bg-slate-950 border-b border-outline-variant/20 shadow-xl px-margin-mobile py-6 flex flex-col gap-4 animate-in fade-in slide-in-from-top-5 duration-350">
+            <a
+              className="text-trust-navy dark:text-white font-bold py-2 border-b border-slate-100 dark:border-slate-800"
+              href="#solutions"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Solutions
+            </a>
+            <Link
+              className="text-secondary dark:text-slate-300 font-medium py-2 border-b border-slate-100 dark:border-slate-800"
+              href="/dashboard"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Impact Dashboard
+            </Link>
+            <a
+              className="text-secondary dark:text-slate-300 font-medium py-2 border-b border-slate-100 dark:border-slate-800"
+              href="#how-it-works"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              How it Works
+            </a>
+            <a
+              className="text-secondary dark:text-slate-300 font-medium py-2 border-b border-slate-100 dark:border-slate-800"
+              href="#about-us"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              About Us
+            </a>
+            <div className="flex gap-4 pt-4">
+              <Link href="/signin" className="flex-1" onClick={() => setMobileMenuOpen(false)}>
+                <button className="w-full border border-outline-variant text-trust-navy dark:text-white font-bold py-3 rounded-full hover:bg-slate-50 dark:hover:bg-slate-900 transition-all text-sm">
+                  Login
+                </button>
               </Link>
-            </div>
-            <div className="hidden md:flex items-center justify-center gap-8 px-4 shrink-0">
-              <Link href="/#how-it-works" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>Platform</Link>
-              <Link href="/#why-greenpe" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>Why Us</Link>
-              <Link href="/about" className={`font-bold transition-all duration-700 ${isScrolled ? "text-[13px] text-foreground/70 hover:text-foreground" : "text-sm text-foreground/80 hover:text-foreground"}`}>About</Link>
-            </div>
-            <div className="flex-1 flex items-center justify-end gap-3 md:gap-4 shrink-0">
-              <Link href="/signin">
-                <button className={`rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-foreground font-bold cursor-pointer shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 duration-700 hover:bg-white/20 hover:border-white/40 ${
-                  isScrolled ? "px-6 h-9 text-sm" : "px-8 h-11 text-base"
-                }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>
+              <Link href="/dashboard" className="flex-1" onClick={() => setMobileMenuOpen(false)}>
+                <button className="w-full bg-impact-green-vibrant text-white font-bold py-3 rounded-full hover:bg-impact-green-deep transition-all text-sm">
                   Get Started
                 </button>
               </Link>
-              <Link href="/contact">
-                <button className={`rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-foreground font-bold cursor-pointer shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 duration-700 hover:bg-white/20 hover:border-white/40 ${
-                  isScrolled ? "px-6 h-9 text-sm" : "px-8 h-11 text-base"
-                }`} style={{ transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}>
-                  Contact Us
-                </button>
-              </Link>
             </div>
           </div>
-        </nav>
-      </header>
+        )}
+      </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-40 md:pt-56 pb-20 md:pb-24 px-6 overflow-hidden">
-        {/* Simple Background Gradient for clean flow */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-primary/5 via-background to-background" />
-
-        {/* Content - Centered */}
-        <div className="relative z-10 max-w-5xl mx-auto text-center">
-          <Badge variant="outline" className="mb-6 border-primary/30 text-primary px-4 py-1.5 text-xs font-bold tracking-wider animate-in fade-in slide-in-from-bottom-2">
-            INDIA'S FIRST DIGITAL VERIFICATION PLATFORM
-          </Badge>
-          {/* PAS Headline */}
-          <h1 className="font-[family-name:var(--font-playfair)] text-5xl md:text-6xl lg:text-7xl font-normal leading-tight tracking-[-0.02em] mb-6 animate-in fade-in slide-in-from-bottom-4 duration-1000 text-foreground">
-            Verify Real Climate Action.<br/>
-            <span className="italic text-primary/80">Not Just Report It.</span>
+      <header className="relative pt-40 pb-24 overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-20 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(0,211,95,0.15),transparent_60%)] dark:bg-[radial-gradient(circle_at_top,rgba(0,211,95,0.08),transparent_60%)]" />
+        <div className="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop relative z-10 text-center">
+          <div className="inline-flex items-center gap-2 bg-impact-green-vibrant/10 text-impact-green-deep dark:text-impact-green-vibrant px-4 py-1.5 rounded-full mb-8 border border-impact-green-vibrant/20 dark:bg-impact-green-vibrant/5 animate-fade-in">
+            <span className="material-symbols-outlined text-[18px]">verified</span>
+            <span className="font-label-md text-[12px] tracking-[0.1em] uppercase">
+              India's First Digital Verification Platform
+            </span>
+          </div>
+          <h1 className="font-display-lg text-display-lg max-w-4xl mx-auto leading-tight mb-8 text-trust-navy dark:text-white animate-slide-up">
+            Verify Real Climate Action. <br />
+            <span className="text-impact-green-vibrant text-glow">Not Just Report It.</span>
           </h1>
-
-          {/* Sub-headline */}
-          <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-150">
-            GreenPe converts real-world climate actions — like solar generation, EV usage, and industrial efficiency — into trusted, auditable proof.
+          <p className="font-body-lg text-body-lg text-secondary dark:text-slate-300 max-w-2xl mx-auto mb-12 animate-fade-in stagger-2">
+            GreenPE converts real-world climate actions — like solar generation, EV usage, and industrial
+            efficiency — into trusted, auditable proof.
           </p>
-
-          <div className="flex items-center justify-center gap-2 md:gap-4 font-medium text-sm md:text-base mb-12 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200 text-foreground/80">
-            <span>From activity</span>
-            <ArrowRight size={16} className="text-primary"/>
-            <span>To verified impact</span>
-            <ArrowRight size={16} className="text-primary"/>
-            <span className="text-primary font-semibold">To usable proof</span>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-300">
-            <Link href="/signin">
-              <Button size="lg" className="rounded-full px-8 h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
+            <Link href="/dashboard">
+              <button className="w-full sm:w-auto bg-trust-navy dark:bg-white dark:text-trust-navy text-white font-bold py-4 px-10 rounded-full hover:bg-trust-navy/90 dark:hover:bg-slate-100 transition-all shadow-xl font-label-md text-label-md scale-100 active:scale-95 duration-200">
                 Get Started Free
-              </Button>
+              </button>
             </Link>
-            <Link href="/signin">
-              <Button size="lg" variant="outline" className="rounded-full px-8 h-12 font-bold">
-                Sign In
-              </Button>
+            <Link href="/dashboard">
+              <button className="w-full sm:w-auto bg-white dark:bg-slate-900 text-trust-navy dark:text-white font-bold py-4 px-10 rounded-full border border-trust-navy/10 dark:border-white/10 hover:border-trust-navy/20 dark:hover:border-white/20 transition-all font-label-md text-label-md flex items-center justify-center gap-2 scale-100 active:scale-95 duration-200 shadow-md">
+                <span className="material-symbols-outlined">bar_chart</span>
+                Impact Dashboard
+              </button>
             </Link>
           </div>
 
-          <div className="max-w-4xl mx-auto p-6 md:p-8 rounded-2xl bg-secondary/30 border border-border/50 text-left animate-in fade-in duration-1000 delay-500">
-            <h3 className="font-bold text-lg mb-4 text-center">Built for the entire ecosystem:</h3>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-muted-foreground text-center">
-              <div className="p-4 rounded-xl bg-background border border-border/50 shadow-sm flex flex-col items-center">
-                <Shield className="mb-2 text-primary" size={24}/>
-                MSMEs & Exporters
+          {/* Transparency Grid / Flow */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-0 relative">
+            {/* Connectors for Desktop */}
+            <div className="hidden md:block absolute top-1/2 left-[15%] right-[15%] h-[2px] bg-gradient-to-r from-impact-green-vibrant via-impact-green-vibrant to-impact-green-vibrant opacity-20 -z-10" />
+
+            <div className="glass-card reveal-card p-8 rounded-3xl md:rounded-r-none md:border-r-0 dark:bg-slate-900/40 dark:border-white/5">
+              <div className="w-12 h-12 bg-impact-green-vibrant/10 rounded-xl flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant mb-4 mx-auto md:mx-0">
+                <span className="material-symbols-outlined">sensors</span>
               </div>
-              <div className="p-4 rounded-xl bg-background border border-border/50 shadow-sm flex flex-col items-center">
-                <Layers className="mb-2 text-primary" size={24}/>
-                Enterprises & Supply Chains
-              </div>
-              <div className="p-4 rounded-xl bg-background border border-border/50 shadow-sm flex flex-col items-center">
-                <Zap className="mb-2 text-primary" size={24}/>
-                Renewable Project Operators
-              </div>
-              <div className="p-4 rounded-xl bg-background border border-border/50 shadow-sm flex flex-col items-center">
-                <Globe className="mb-2 text-primary" size={24}/>
-                Government & Policy
-              </div>
+              <h3 className="font-headline-md text-headline-md mb-2 text-trust-navy dark:text-white text-left md:text-left">
+                Real-world Activity
+              </h3>
+              <p className="text-secondary dark:text-slate-300 font-body-md text-left">
+                IoT sensors & smart meters capture live emission data.
+              </p>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Vision Section */}
-      <section className="py-16 md:py-20 px-6 bg-primary/5 text-center">
-        <div className="max-w-4xl mx-auto">
-          <Badge variant="outline" className="mb-4 border-primary/30 text-primary px-4 py-1.5 text-xs font-bold tracking-wider">OUR VISION</Badge>
-          <h2 className="text-2xl md:text-4xl font-[family-name:var(--font-playfair)] leading-relaxed italic text-foreground">
-            "To make every climate action in India measurable, verifiable, and trusted at scale."
-          </h2>
-          <p className="mt-6 text-muted-foreground max-w-2xl mx-auto">
-            Our goal is to become the default verification layer for climate action in India connecting real-world activity to trusted outcomes. No manual audits. No fragmented data. No guesswork.
-          </p>
-        </div>
-      </section>
-
-      {/* The Problem Section */}
-      <section id="problem" className="py-24 px-6 bg-background">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <Badge variant="outline" className="mb-6 border-red-500/30 text-red-600 px-4 py-1.5 text-xs font-bold tracking-wider">THE PROBLEM</Badge>
-            <h2 className="font-[family-name:var(--font-playfair)] text-4xl md:text-5xl font-normal text-foreground mb-4">
-              Climate action is happening. <br/>
-              <span className="italic text-red-600/80">But it is not trusted, standardized, or usable.</span>
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-              Today's system is fundamentally broken. "Reported" does not mean "Verified".
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-            {[
-              { icon: "❌", title: "Fragmented Data", desc: "Data is split across bills, spreadsheets, and disconnected devices." },
-              { icon: "❌", title: "Slow & Expensive", desc: "Verification takes months and costs ₹10L+." },
-              { icon: "❌", title: "Exclusive", desc: "MSMEs and small projects are systematically excluded." },
-              { icon: "❌", title: "No Standard Format", desc: "Different standards across regulators, registries, or ESG systems." }
-            ].map((problem, i) => (
-              <div key={i} className="p-6 rounded-2xl bg-red-50/50 dark:bg-red-950/10 border border-red-100 dark:border-red-900/30 text-center">
-                <div className="text-3xl mb-3">{problem.icon}</div>
-                <h4 className="font-bold text-foreground mb-2">{problem.title}</h4>
-                <p className="text-sm text-muted-foreground">{problem.desc}</p>
+            <div className="glass-card reveal-card p-8 rounded-3xl md:rounded-none relative dark:bg-slate-900/40 dark:border-white/5">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-impact-green-vibrant text-white px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">
+                Digital MRV
               </div>
-            ))}
-          </div>
-
-          <div className="max-w-3xl mx-auto text-center p-8 bg-secondary/30 rounded-2xl border border-border/50">
-            <h3 className="font-bold text-xl mb-4 text-foreground">The Result:</h3>
-            <p className="text-muted-foreground mb-4">Climate impact cannot be reliably used for:</p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {['Compliance (CBAM, BRSR)', 'Carbon Markets', 'Green Finance', 'Policy Incentives'].map((item) => (
-                <span key={item} className="px-4 py-2 bg-background rounded-full text-sm font-medium border border-border shadow-sm">
-                  {item}
+              <div className="w-12 h-12 bg-impact-green-vibrant/10 rounded-xl flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant mb-4 mx-auto md:mx-0">
+                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  verified_user
                 </span>
-              ))}
+              </div>
+              <h3 className="font-headline-md text-headline-md mb-2 text-trust-navy dark:text-white text-left md:text-left">
+                Verified Impact
+              </h3>
+              <p className="text-secondary dark:text-slate-300 font-body-md text-left">
+                AI-driven validation ensures 100% data integrity.
+              </p>
+            </div>
+
+            <div className="glass-card reveal-card p-8 rounded-3xl md:rounded-l-none md:border-l-0 dark:bg-slate-900/40 dark:border-white/5">
+              <div className="w-12 h-12 bg-impact-green-vibrant/10 rounded-xl flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant mb-4 mx-auto md:mx-0">
+                <span className="material-symbols-outlined">description</span>
+              </div>
+              <h3 className="font-headline-md text-headline-md mb-2 text-trust-navy dark:text-white text-left md:text-left">
+                Usable Proof
+              </h3>
+              <p className="text-secondary dark:text-slate-300 font-body-md text-left">
+                On-chain certificates ready for ESG & Carbon Markets.
+              </p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Vision / Mission Bento Grid */}
+      <section id="about-us" className="py-24 bg-trust-navy text-white overflow-hidden transition-colors">
+        <div className="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
+          <div className="flex flex-col md:flex-row gap-12 items-center mb-24">
+            <div className="flex-1">
+              <span className="text-impact-green-vibrant font-label-md tracking-widest uppercase mb-4 block">
+                Our Radical Vision
+              </span>
+              <h2 className="font-display-lg text-display-lg leading-tight mb-8">
+                To make every climate action in India <span className="italic font-light opacity-80">measurable</span> and{" "}
+                <span className="text-impact-green-vibrant">trusted at scale.</span>
+              </h2>
+              <p className="text-secondary-fixed-dim/80 font-body-lg text-body-lg text-slate-300">
+                GreenPE is the missing verification layer. No manual audits. No fragmented data. No guesswork. Just
+                verifiable truth for a sustainable future.
+              </p>
+            </div>
+            <div className="flex-1 relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl border border-white/10 group">
+              <img
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                alt="A high-tech control room with large glowing holographic displays showing green energy grids"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyUYs-j7su-_slehbEWCEbicjt26dEXcMcrO2eQ4gBG1nW-bO1sN5rZcEODMgWK5vKUhMtjgVBY400hzWNkHDid5RH8grLodKgRaNvt4tBCXk2XxdMrQocN4oky-BKM5Zz9KOTb8WV9ufBs7-NjHJHp-U6yIz68pLJeYgU69G3ZP3vpzEvQSI0ILYjfcNMtNYpCC-O1RTsW6E1SSibWhg5hTmYBSXQa_5CT5ZbUx79s5lHw8dj12BY551swY8z9Ec1EUEww5yFEwo"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-trust-navy via-transparent to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6 p-4 bg-white/10 backdrop-blur-md border border-white/10 text-white rounded-xl flex items-center justify-between shadow-lg">
+                <div>
+                  <p className="font-label-md text-[10px] uppercase opacity-60">Live Network Capacity</p>
+                  <p className="font-headline-md text-white">1.2 GW Verified</p>
+                </div>
+                <div className="text-impact-green-vibrant">
+                  <span className="material-symbols-outlined text-[32px]">query_stats</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Service Modules Cluster */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="p-8 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 transition-all cursor-default group">
+              <span className="material-symbols-outlined text-impact-green-vibrant mb-6 block text-[40px] group-hover:scale-110 transition-transform select-none">
+                factory
+              </span>
+              <h4 className="font-headline-md text-[20px] mb-3 text-white">SMEs & Exporters</h4>
+              <p className="text-secondary-fixed-dim/70 text-slate-300 text-sm leading-relaxed">
+                Ensure CBAM compliance and unlock green financing with automated reporting.
+              </p>
+            </div>
+            <div className="p-8 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 transition-all cursor-default group">
+              <span className="material-symbols-outlined text-impact-green-vibrant mb-6 block text-[40px] group-hover:scale-110 transition-transform select-none">
+                hub
+              </span>
+              <h4 className="font-headline-md text-[20px] mb-3 text-white">Enterprises</h4>
+              <p className="text-secondary-fixed-dim/70 text-slate-300 text-sm leading-relaxed">
+                Digitally verify Scope 3 emissions across your entire multi-tier supply chain.
+              </p>
+            </div>
+            <div className="p-8 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 transition-all cursor-default group">
+              <span className="material-symbols-outlined text-impact-green-vibrant mb-6 block text-[40px] group-hover:scale-110 transition-transform select-none">
+                solar_power
+              </span>
+              <h4 className="font-headline-md text-[20px] mb-3 text-white">Project Operators</h4>
+              <p className="text-secondary-fixed-dim/70 text-slate-300 text-sm leading-relaxed">
+                Issue higher-value carbon credits through real-time, sensor-driven verification.
+              </p>
+            </div>
+            <div className="p-8 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 transition-all cursor-default group">
+              <span className="material-symbols-outlined text-impact-green-vibrant mb-6 block text-[40px] group-hover:scale-110 transition-transform select-none">
+                account_balance
+              </span>
+              <h4 className="font-headline-md text-[20px] mb-3 text-white">Gov & Policy</h4>
+              <p className="text-secondary-fixed-dim/70 text-slate-300 text-sm leading-relaxed">
+                Establish national registries with auditable, high-fidelity data rails.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* The Solution & How It Works */}
-      <section id="how-it-works" className="py-24 px-6 bg-secondary/30 relative overflow-hidden">
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
-        <div className="max-w-5xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <Badge variant="outline" className="mb-6 border-primary/30 text-primary px-4 py-1.5 text-xs font-bold tracking-wider">THE SOLUTION</Badge>
-            <h2 className="font-[family-name:var(--font-playfair)] text-4xl md:text-5xl font-normal text-foreground mb-4">
-              GreenPe makes climate action <br/>
-              <span className="italic text-primary/80">verifiable, digital, and usable.</span>
+      {/* How it Works Timeline */}
+      <section id="how-it-works" className="py-24 bg-surface-container-low dark:bg-slate-950 border-b border-outline-variant/15 transition-colors">
+        <div className="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
+          <div className="text-center max-w-3xl mx-auto mb-20">
+            <span className="bg-white dark:bg-slate-900 dark:border-white/10 px-4 py-1.5 rounded-full text-impact-green-deep dark:text-impact-green-vibrant font-label-md border border-impact-green-vibrant/10 mb-6 inline-block">
+              The Process
+            </span>
+            <h2 className="font-display-lg text-display-lg text-trust-navy dark:text-white mb-6">
+              GreenPE makes climate action verifiable and usable.
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-              We transform real-world activity into machine-readable, auditable proof of impact using automated verification systems.
+            <p className="text-secondary dark:text-slate-300 font-body-lg">
+              We transform real-world activity into machine-readable, auditable proof using automated systems.
             </p>
           </div>
 
-          <div className="space-y-6">
-            {[
-              {
-                step: "1", title: "Data Ingestion",
-                desc: "Connect real data from smart meters, solar inverters, EV systems, and ERP / industrial systems.",
-                icon: Activity, color: "from-blue-500/10 to-indigo-500/10"
-              },
-              {
-                step: "2", title: "Automated Verification (Digital MRV)",
-                desc: "We apply standardized methodologies to calculate emissions, measure reductions, and validate authenticity.",
-                icon: Cpu, color: "from-indigo-500/10 to-purple-500/10"
-              },
-              {
-                step: "3", title: "Generate Green Impact Certificate (GIC)",
-                desc: "A digitally verifiable proof that the activity occurred, the impact is measured, and the data is auditable.",
-                icon: FileCheck, color: "from-primary/10 to-emerald-500/10"
-              },
-              {
-                step: "4", title: "Use the Output",
-                desc: "Export for ESG & BRSR reporting, CBAM compliance, carbon market readiness, supply chain disclosures, and green financing.",
-                icon: BarChart, color: "from-emerald-500/10 to-teal-500/10"
-              }
-            ].map((step) => (
-              <div key={step.step} className="flex flex-col md:flex-row items-center gap-6 bg-card p-6 md:p-8 rounded-2xl border border-border/50 hover:border-primary/30 transition-all hover:shadow-lg relative overflow-hidden group">
-                <div className={`absolute inset-0 bg-gradient-to-r ${step.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-                <div className="relative z-10 shrink-0">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20 group-hover:scale-110 transition-transform duration-500">
-                    <step.icon size={28} strokeWidth={2}/>
+          <div className="relative">
+            {/* Vertical Line */}
+            <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-impact-green-vibrant/40 via-impact-green-vibrant to-impact-green-vibrant/20 -translate-x-1/2 hidden md:block" />
+
+            <div className="space-y-12 relative">
+              {/* Step 1 */}
+              <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+                <div className="flex-1 md:text-right">
+                  <div className="inline-flex items-center gap-2 text-impact-green-deep dark:text-impact-green-vibrant font-bold mb-2">
+                    <span className="bg-impact-green-vibrant text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">
+                      1
+                    </span>
+                    <span className="uppercase tracking-widest text-[12px]">Phase One</span>
                   </div>
+                  <h3 className="font-headline-md text-headline-md mb-4 text-trust-navy dark:text-white">
+                    Data Ingestion
+                  </h3>
+                  <p className="text-secondary dark:text-slate-300">
+                    Connect real data from smart meters, solar inverters, EV systems, and ERP / industrial systems.
+                  </p>
                 </div>
-                <div className="relative z-10 flex-1 text-center md:text-left">
-                  <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
-                    <span className="text-primary font-bold text-sm">Step {step.step}</span>
-                    <h3 className="text-xl font-bold text-foreground">{step.title}</h3>
+                <div className="hidden md:flex w-12 h-12 bg-white dark:bg-slate-900 rounded-full border-4 border-impact-green-vibrant z-10 items-center justify-center shadow-lg">
+                  <span className="material-symbols-outlined text-impact-green-deep dark:text-impact-green-vibrant select-none">
+                    bolt
+                  </span>
+                </div>
+                <div className="flex-1 w-full">
+                  <div className="glass-card p-6 rounded-2xl border-dashed border-2 border-outline-variant/30 flex items-center gap-4 dark:bg-slate-900/40 dark:border-white/10">
+                    <div className="w-12 h-12 rounded-lg bg-surface-container dark:bg-slate-800 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-secondary dark:text-slate-300 select-none">
+                        database
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-label-md text-trust-navy dark:text-white">Connected Assets</p>
+                      <p className="text-sm text-secondary dark:text-slate-400">24.5k Industrial Endpoints</p>
+                    </div>
                   </div>
-                  <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
                 </div>
               </div>
-            ))}
+
+              {/* Step 2 */}
+              <div className="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-16">
+                <div className="flex-1 md:text-left">
+                  <div className="inline-flex items-center gap-2 text-impact-green-deep dark:text-impact-green-vibrant font-bold mb-2">
+                    <span className="bg-impact-green-vibrant text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">
+                      2
+                    </span>
+                    <span className="uppercase tracking-widest text-[12px]">Phase Two</span>
+                  </div>
+                  <h3 className="font-headline-md text-headline-md mb-4 text-trust-navy dark:text-white">
+                    Automated Verification
+                  </h3>
+                  <p className="text-secondary dark:text-slate-300">
+                    We apply standardized methodologies to calculate emissions, measure reductions, and validate authenticity.
+                  </p>
+                </div>
+                <div className="hidden md:flex w-12 h-12 bg-white dark:bg-slate-900 rounded-full border-4 border-impact-green-vibrant z-10 items-center justify-center shadow-lg">
+                  <span className="material-symbols-outlined text-impact-green-deep dark:text-impact-green-vibrant select-none">
+                    schema
+                  </span>
+                </div>
+                <div className="flex-1 w-full">
+                  <div className="glass-card p-6 rounded-2xl border-dashed border-2 border-outline-variant/30 flex flex-col gap-3 dark:bg-slate-900/40 dark:border-white/10">
+                    <div className="flex justify-between items-center text-xs font-bold uppercase text-secondary dark:text-slate-300">
+                      <span>Cross-Check Validation</span>
+                      <span className="text-impact-green-vibrant">99.9% Match</span>
+                    </div>
+                    <div className="h-2 w-full bg-surface-container dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-impact-green-vibrant w-[99.9%]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+                <div className="flex-1 md:text-right">
+                  <div className="inline-flex items-center gap-2 text-impact-green-deep dark:text-impact-green-vibrant font-bold mb-2">
+                    <span className="bg-impact-green-vibrant text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">
+                      3
+                    </span>
+                    <span className="uppercase tracking-widest text-[12px]">Phase Three</span>
+                  </div>
+                  <h3 className="font-headline-md text-headline-md mb-4 text-trust-navy dark:text-white">
+                    Generate GIC
+                  </h3>
+                  <p className="text-secondary dark:text-slate-300">
+                    A digitally verifiable proof that the activity occurred, the impact is measured, and the data is auditable.
+                  </p>
+                </div>
+                <div className="hidden md:flex w-12 h-12 bg-white dark:bg-slate-900 rounded-full border-4 border-impact-green-vibrant z-10 items-center justify-center shadow-lg">
+                  <span className="material-symbols-outlined text-impact-green-deep dark:text-impact-green-vibrant select-none" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    workspace_premium
+                  </span>
+                </div>
+                <div className="flex-1 w-full">
+                  {/* GIC Preview Component */}
+                  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border-2 border-impact-green-vibrant shadow-xl relative overflow-hidden transition-all duration-300 hover:scale-[1.02]">
+                    <div className="absolute -right-10 -top-10 w-32 h-32 bg-impact-green-vibrant/5 rounded-full" />
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <p className="text-[10px] font-bold text-impact-green-deep dark:text-impact-green-vibrant uppercase tracking-tighter">
+                          Green Impact Certificate
+                        </p>
+                        <p className="text-[8px] text-secondary dark:text-slate-400">Serial No: GPE-2024-X88321</p>
+                      </div>
+                      <div className="w-10 h-10 bg-impact-green-vibrant rounded flex items-center justify-center text-white">
+                        <span className="material-symbols-outlined text-[20px] select-none">qr_code_2</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2 mb-4">
+                      <div className="h-[1px] bg-outline-variant/20" />
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] text-secondary dark:text-slate-400">Verified Offset</span>
+                        <span className="text-sm font-bold text-trust-navy dark:text-white">12,450 tCO2e</span>
+                      </div>
+                      <div className="h-[1px] bg-outline-variant/20" />
+                    </div>
+                    <div className="bg-impact-green-vibrant/10 p-2 rounded text-[10px] text-impact-green-deep dark:text-impact-green-vibrant font-bold text-center">
+                      CRYPTOGRAPHICALLY SEALED
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 4 */}
+              <div className="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-16">
+                <div className="flex-1 md:text-left">
+                  <div className="inline-flex items-center gap-2 text-impact-green-deep dark:text-impact-green-vibrant font-bold mb-2">
+                    <span className="bg-impact-green-vibrant text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">
+                      4
+                    </span>
+                    <span className="uppercase tracking-widest text-[12px]">Phase Four</span>
+                  </div>
+                  <h3 className="font-headline-md text-headline-md mb-4 text-trust-navy dark:text-white">
+                    Use the Output
+                  </h3>
+                  <p className="text-secondary dark:text-slate-300">
+                    Export for ESG & BRSR reporting, CBAM compliance, carbon market readiness, or green financing.
+                  </p>
+                </div>
+                <div className="hidden md:flex w-12 h-12 bg-white dark:bg-slate-900 rounded-full border-4 border-impact-green-vibrant z-10 items-center justify-center shadow-lg">
+                  <span className="material-symbols-outlined text-impact-green-deep dark:text-impact-green-vibrant select-none">
+                    output
+                  </span>
+                </div>
+                <div className="flex-1 w-full">
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-4 py-2 bg-white dark:bg-slate-900 rounded-full border border-outline-variant/30 dark:border-white/10 text-xs font-semibold text-trust-navy dark:text-white shadow-sm hover:border-impact-green-vibrant/40 transition-colors">
+                      CBAM Report
+                    </span>
+                    <span className="px-4 py-2 bg-white dark:bg-slate-900 rounded-full border border-outline-variant/30 dark:border-white/10 text-xs font-semibold text-trust-navy dark:text-white shadow-sm hover:border-impact-green-vibrant/40 transition-colors">
+                      BRSR Filing
+                    </span>
+                    <span className="px-4 py-2 bg-white dark:bg-slate-900 rounded-full border border-outline-variant/30 dark:border-white/10 text-xs font-semibold text-trust-navy dark:text-white shadow-sm hover:border-impact-green-vibrant/40 transition-colors">
+                      Carbon Registry
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* What is a GIC? */}
-      <section className="py-24 px-6 bg-primary text-primary-foreground text-center">
-        <div className="max-w-4xl mx-auto">
-          <FileCheck className="mx-auto mb-6 opacity-80" size={48} />
-          <h2 className="text-3xl md:text-5xl font-[family-name:var(--font-playfair)] font-normal mb-8">
-            What is a Green Impact Certificate (GIC)?
+      {/* Why GreenPE Grid */}
+      <section id="solutions" className="py-24 bg-background transition-colors duration-300">
+        <div className="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
+          <div className="text-center mb-16">
+            <h2 className="font-display-lg text-display-lg text-trust-navy dark:text-white mb-4">
+              Why GreenPE?
+            </h2>
+            <p className="text-secondary dark:text-slate-300 max-w-2xl mx-auto">
+              Climate action doesn't fail due to lack of effort—it fails due to lack of trust, standardization, and
+              verification.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Benefit 1 */}
+            <div className="group p-8 rounded-3xl bg-surface-container-lowest dark:bg-slate-900/30 border border-outline-variant/10 dark:border-white/5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-2xl bg-impact-green-vibrant/10 flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant mb-6 group-hover:bg-impact-green-vibrant group-hover:text-white transition-all select-none">
+                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  target
+                </span>
+              </div>
+              <h4 className="font-headline-md text-[20px] mb-3 text-trust-navy dark:text-white">
+                Real Action, Not Reporting
+              </h4>
+              <p className="text-secondary dark:text-slate-300 text-sm leading-relaxed">
+                Stop estimating emissions based on bill averages. We focus on verifying actual climate activity using
+                real-world data feeds.
+              </p>
+            </div>
+
+            {/* Benefit 2 */}
+            <div className="group p-8 rounded-3xl bg-surface-container-lowest dark:bg-slate-900/30 border border-outline-variant/10 dark:border-white/5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-2xl bg-impact-green-vibrant/10 flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant mb-6 group-hover:bg-impact-green-vibrant group-hover:text-white transition-all select-none">
+                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  expand_content
+                </span>
+              </div>
+              <h4 className="font-headline-md text-[20px] mb-3 text-trust-navy dark:text-white">Built for Scale</h4>
+              <p className="text-secondary dark:text-slate-300 text-sm leading-relaxed">
+                Traditional audits only work for massive projects. GreenPE is designed for MSMEs, distributed assets,
+                and everyday climate actions.
+              </p>
+            </div>
+
+            {/* Benefit 3 */}
+            <div className="group p-8 rounded-3xl bg-surface-container-lowest dark:bg-slate-900/30 border border-outline-variant/10 dark:border-white/5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-2xl bg-impact-green-vibrant/10 flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant mb-6 group-hover:bg-impact-green-vibrant group-hover:text-white transition-all select-none">
+                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  bolt
+                </span>
+              </div>
+              <h4 className="font-headline-md text-[20px] mb-3 text-trust-navy dark:text-white">
+                Faster, Simpler, Affordable
+              </h4>
+              <p className="text-secondary dark:text-slate-300 text-sm leading-relaxed">
+                No long audit cycles or heavy consulting fees. Verification becomes continuous, digital, and instantly
+                accessible.
+              </p>
+            </div>
+
+            {/* Benefit 4 */}
+            <div className="group p-8 rounded-3xl bg-surface-container-lowest dark:bg-slate-900/30 border border-outline-variant/10 dark:border-white/5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-2xl bg-impact-green-vibrant/10 flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant mb-6 group-hover:bg-impact-green-vibrant group-hover:text-white transition-all select-none">
+                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  settings_input_component
+                </span>
+              </div>
+              <h4 className="font-headline-md text-[20px] mb-3 text-trust-navy dark:text-white">
+                Standardized Interoperable
+              </h4>
+              <p className="text-secondary dark:text-slate-300 text-sm leading-relaxed">
+                We bring structure to data formats, verification logic, and output certificates. One layer to connect
+                everything.
+              </p>
+            </div>
+
+            {/* Benefit 5 */}
+            <div className="group p-8 rounded-3xl bg-surface-container-lowest dark:bg-slate-900/30 border border-outline-variant/10 dark:border-white/5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-2xl bg-impact-green-vibrant/10 flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant mb-6 group-hover:bg-impact-green-vibrant group-hover:text-white transition-all select-none">
+                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  monitoring
+                </span>
+              </div>
+              <h4 className="font-headline-md text-[20px] mb-3 text-trust-navy dark:text-white">
+                Future Compliance Ready
+              </h4>
+              <p className="text-secondary dark:text-slate-300 text-sm leading-relaxed">
+                Climate is moving toward stricter regulations (CBAM, ESG). GreenPE supports all of these through one
+                unified verification layer.
+              </p>
+            </div>
+
+            {/* Benefit 6 */}
+            <div className="group p-8 rounded-3xl bg-surface-container-lowest dark:bg-slate-900/30 border border-outline-variant/10 dark:border-white/5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-2xl bg-impact-green-vibrant/10 flex items-center justify-center text-impact-green-deep dark:text-impact-green-vibrant mb-6 group-hover:bg-impact-green-vibrant group-hover:text-white transition-all select-none">
+                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  language
+                </span>
+              </div>
+              <h4 className="font-headline-md text-[20px] mb-3 text-trust-navy dark:text-white">
+                India-First, Global Reach
+              </h4>
+              <p className="text-secondary dark:text-slate-300 text-sm leading-relaxed">
+                Designed for the unique challenges of India's millions of MSMEs, while maintaining compliance with
+                global standards.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Accordion FAQ Section - Gated by User Global Rule */}
+      <section className="py-24 bg-surface-container-low dark:bg-slate-950 transition-colors duration-300">
+        <div className="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop">
+          <div className="text-center mb-16">
+            <span className="bg-white dark:bg-slate-900 dark:border-white/10 px-4 py-1.5 rounded-full text-impact-green-deep dark:text-impact-green-vibrant font-label-md border border-impact-green-vibrant/10 mb-6 inline-block">
+              FAQ
+            </span>
+            <h2 className="font-display-lg text-display-lg text-trust-navy dark:text-white mb-4">
+              Have Questions? We've Got Answers.
+            </h2>
+            <p className="text-secondary dark:text-slate-300">
+              Clear information on integration speed, data security, and compliance verification.
+            </p>
+          </div>
+          <div className="mt-12 space-y-2">
+            <FAQItem
+              question="How quickly can I set up GreenPE?"
+              answer="Setting up smart integrations takes less than 15 minutes. Our deterministic ingestion pipelines can map existing IoT sensor configurations or smart meter logs, getting you live in hours rather than months."
+            />
+            <FAQItem
+              question="What content sources or data formats does GreenPE use?"
+              answer="We interface natively with IoT protocols (MQTT, HTTP APIs), SCADA, smart meters, NASA POWER solar datasets, and standard files (.xlsx, .csv, .json). We normalize all inputs through the open Climate Data Ingestion Format (CDIF)."
+            />
+            <FAQItem
+              question="How does GreenPE ensure answers and calculations are accurate?"
+              answer="Every calculation is executed by our deterministic MRV engine using verified regulatory methodologies (e.g. CEA India, IPCC AR6). We do not use black-box models or AI guessing, making every GIC fully auditable and certifiable."
+            />
+            <FAQItem
+              question="What happens if the telemetry doesn't match the methodology?"
+              answer="If telemetry lacks required parameters or if geo-coordinates/values exceed acceptable physical limits (e.g., negative generation), the validation pipeline flags the telemetry transaction, preventing verification or certificate issuance."
+            />
+            <FAQItem
+              question="Is my customer data secure when using GreenPE?"
+              answer="Yes. We leverage Composite Identity Hashing (CIH) to cryptographically anchor device streams to entity profiles without storing plaintext raw telemetry on-chain. All operations are fully encrypted, GDPR, and SOC2 compliant."
+            />
+            <FAQItem
+              question="Does GreenPE require technical expertise to manage?"
+              answer="No. Once smart connections are set up, business users can track verifications, export reports (CBAM, BRSR), and audit certificate lineages directly from our intuitive pilot dashboard."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section className="py-24 bg-impact-green-vibrant">
+        <div className="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop text-center">
+          <h2 className="font-display-lg text-display-lg text-white mb-6">
+            Build the Future of Climate <br className="hidden md:block" /> Verification Together.
           </h2>
-          <p className="text-xl md:text-2xl font-light mb-12 opacity-90">
-            A GIC is a digital proof of verified climate action.
+          <p className="text-white/80 max-w-xl mx-auto mb-10 font-body-lg">
+            We are actively working with partners across industries to build a scalable verification ecosystem. Let's
+            make climate action measurable and trusted.
           </p>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-primary-foreground/10 p-6 rounded-xl border border-primary-foreground/20 backdrop-blur-sm">
-              <Shield className="mx-auto mb-4" size={32}/>
-              <h4 className="font-bold text-lg mb-2">Verified Evidence Layer</h4>
-              <p className="text-sm opacity-80">Cryptographically secured proof of real-world activity.</p>
-            </div>
-            <div className="bg-primary-foreground/10 p-6 rounded-xl border border-primary-foreground/20 backdrop-blur-sm">
-              <Server className="mx-auto mb-4" size={32}/>
-              <h4 className="font-bold text-lg mb-2">Machine-Readable</h4>
-              <p className="text-sm opacity-80">Easily integrated into enterprise systems and databases.</p>
-            </div>
-            <div className="bg-primary-foreground/10 p-6 rounded-xl border border-primary-foreground/20 backdrop-blur-sm">
-              <CheckCircle className="mx-auto mb-4" size={32}/>
-              <h4 className="font-bold text-lg mb-2">Compliance-Ready</h4>
-              <p className="text-sm opacity-80">Designed for ESG, BRSR, CBAM, and global standards.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Why GreenPe */}
-      <section id="why-greenpe" className="py-24 px-6 bg-background">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="font-[family-name:var(--font-playfair)] text-4xl md:text-5xl font-normal text-foreground mb-4">
-              Why GreenPe?
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Because climate action doesn't fail due to lack of effort—it fails due to lack of trust, standardization, and verification.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { title: "We Focus on Real Action, Not Just Reporting", desc: "Most platforms estimate emissions & generate reports. We focus on verifying real-world climate activity using actual data." },
-              { title: "Built for Scale, Not Just Large Projects", desc: "Traditional systems work only for large projects & high-budget verification. GreenPe is designed for MSMEs, distributed assets, and everyday climate actions." },
-              { title: "Faster, Simpler, Affordable", desc: "No long audit cycles. No heavy consulting dependency. No fragmented workflows. Verification becomes continuous and digital." },
-              { title: "Standardized & Interoperable", desc: "We bring structure to data formats, verification logic, and output certificates. So systems can connect easily, scale efficiently, and be trusted." },
-              { title: "Built for Future Compliance & Finance", desc: "Climate is moving toward stricter regulations (CBAM, ESG), carbon markets, and green financing. GreenPe supports all of these through one verification layer." },
-              { title: "Designed for India, Scalable Globally", desc: "India has millions of MSMEs, distributed climate actions, and growing compliance needs. We are building for India-first challenges → global scalability." }
-            ].map((feature, idx) => (
-              <div key={idx} className="p-8 rounded-2xl bg-secondary/20 border border-border/50 hover:bg-secondary/40 transition-colors">
-                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary font-bold">
-                  {idx + 1}
-                </div>
-                <h4 className="font-bold text-lg text-foreground mb-3">{feature.title}</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-16 text-center">
-            <p className="text-xl font-medium text-foreground italic">
-              "Others measure or monetize climate impact. We make it verifiable, trusted, and usable."
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Now / Impact / CTA */}
-      <section className="py-24 md:py-32 px-6 bg-secondary/50 border-t border-border/50">
-        <div className="max-w-4xl mx-auto text-center">
-          <Badge variant="outline" className="mb-6 border-primary/30 text-primary px-4 py-1.5 text-xs font-bold tracking-wider">WHY NOW</Badge>
-          <h2 className="font-[family-name:var(--font-playfair)] text-4xl md:text-5xl font-normal text-foreground mb-8">
-            Climate action is entering a new phase — <br/>
-            <span className="italic text-accent">where proof matters more than intent.</span>
-          </h2>
-          
-          <div className="text-left bg-background p-8 rounded-2xl border border-border shadow-sm mb-12">
-            <p className="text-muted-foreground mb-6">Across India and globally, regulations are tightening, carbon markets are expanding, and businesses are under pressure to prove impact, not just report it.</p>
-            <p className="text-muted-foreground mb-6 font-semibold text-foreground">But the system is not ready. Today:</p>
-            <ul className="space-y-3 text-muted-foreground mb-6">
-              <li className="flex items-start gap-3"><CheckCircle size={18} className="text-red-500 mt-0.5 shrink-0"/> Verification is manual and expensive</li>
-              <li className="flex items-start gap-3"><CheckCircle size={18} className="text-red-500 mt-0.5 shrink-0"/> Data is fragmented and inconsistent</li>
-              <li className="flex items-start gap-3"><CheckCircle size={18} className="text-red-500 mt-0.5 shrink-0"/> Small businesses are excluded</li>
-              <li className="flex items-start gap-3"><CheckCircle size={18} className="text-red-500 mt-0.5 shrink-0"/> No standard system exists to verify climate actions at scale</li>
-            </ul>
-            <p className="text-lg font-bold text-primary mt-8 pt-6 border-t border-border">
-              The next phase of climate action will be driven by verification — not declarations.
-            </p>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <h3 className="text-2xl font-bold mb-6 text-foreground">Let's Build the Future of Climate Verification Together</h3>
-            <p className="text-muted-foreground mb-8 max-w-2xl">
-              We are actively working with partners across industries to build a scalable verification ecosystem. Let's make climate action measurable and trusted.
-            </p>
-            <Link href="/contact">
-              <Button size="lg" className="rounded-full px-10 h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-base shadow-xl transition-all hover:scale-105 active:scale-95">
-                Collaborate With Us <ArrowRight size={18} className="ml-2" />
-              </Button>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link href="/dashboard" className="inline-block">
+              <button className="w-full sm:w-auto bg-trust-navy text-white font-bold py-5 px-12 rounded-full hover:bg-trust-navy/90 transition-all shadow-2xl flex items-center justify-center gap-3 group scale-100 active:scale-95 duration-200">
+                Collaborate With Us
+                <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform select-none">
+                  arrow_forward
+                </span>
+              </button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Footer Minimal */}
-      <footer className="border-t border-border/50 py-12 px-6 bg-background">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2">
-            <Shield size={20} className="text-primary" />
-            <span className="font-bold text-lg text-foreground">GreenPe</span>
+      {/* Footer */}
+      <footer className="bg-trust-navy pt-20 pb-10">
+        <div className="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
+            <div className="col-span-2">
+              <div className="font-display-lg text-headline-md font-bold text-white mb-6">GreenPE</div>
+              <p className="text-slate-400 max-w-sm mb-8 text-sm">
+                Building the future of climate verification. Radical transparency for a sustainable planet.
+              </p>
+              <div className="flex gap-4">
+                <a
+                  className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-impact-green-vibrant hover:text-white transition-all select-none"
+                  href="#"
+                  aria-label="Share"
+                >
+                  <span className="material-symbols-outlined text-[20px]">share</span>
+                </a>
+                <a
+                  className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-impact-green-vibrant hover:text-white transition-all select-none"
+                  href="#"
+                  aria-label="Website"
+                >
+                  <span className="material-symbols-outlined text-[20px]">public</span>
+                </a>
+              </div>
+            </div>
+            <div>
+              <h5 className="text-white font-bold mb-6">Solutions</h5>
+              <ul className="space-y-4">
+                <li>
+                  <Link className="text-slate-400 hover:text-white transition-colors text-sm" href="/dashboard">
+                    Impact Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <a className="text-slate-400 hover:text-white transition-colors text-sm" href="#solutions">
+                    Enterprise Solutions
+                  </a>
+                </li>
+                <li>
+                  <a className="text-slate-400 hover:text-white transition-colors text-sm" href="#solutions">
+                    SME Portal
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h5 className="text-white font-bold mb-6">Company</h5>
+              <ul className="space-y-4">
+                <li>
+                  <a className="text-slate-400 hover:text-white transition-colors text-sm" href="#">
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a className="text-slate-400 hover:text-white transition-colors text-sm" href="#">
+                    Terms of Service
+                  </a>
+                </li>
+                <li>
+                  <a className="text-slate-400 hover:text-white transition-colors text-sm" href="mailto:support@greenpe.in">
+                    Contact Us
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
-          
-          <div className="flex gap-6 text-sm text-muted-foreground">
-            <Link href="/about" className="hover:text-primary transition-colors">About Us</Link>
-            <Link href="/contact" className="hover:text-primary transition-colors">Contact Us</Link>
-            <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
+          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-slate-500 text-[12px]">
+              &copy; 2024 GreenPE. All rights reserved. Building the future of climate verification.
+            </p>
+            <div className="flex gap-6">
+              <span className="text-impact-green-vibrant text-[12px] font-bold">
+                Status: All Systems Operational
+              </span>
+            </div>
           </div>
-
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} GreenPe. All rights reserved.
-          </p>
         </div>
       </footer>
     </div>
   );
 }
-
